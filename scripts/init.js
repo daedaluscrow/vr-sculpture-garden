@@ -1,3 +1,4 @@
+import { makeSkybox, loadAssets } from "./lib/index.js";
 
 const canvas = document.getElementById("renderCanvas");
 let engine = null;
@@ -23,14 +24,14 @@ async function createScene(){
     let light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
     
-    let sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
-    sphere.position.y = 1;
-
-    const env = scene.createDefaultEnvironment();
+    // let sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+    // sphere.position.y = 1;
+    loadAssets(scene);
+    makeSkybox(scene); 
 
     // here we add XR support
     const xr = await scene.createDefaultXRExperienceAsync({
-      floorMeshes: [env.ground],
+      // floorMeshes: [env.ground],
       uiOptions: {
         onError: (error) => {
           console.log(error);
