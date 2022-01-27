@@ -15,17 +15,19 @@ let createDefaultEngine = function() {
 
 async function createScene(){
     const scene = new BABYLON.Scene(engine);
+    // scene.useRightHandedSystem = true;
 
     let camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10),
     scene);
     camera.setTarget(BABYLON.Vector3.Zero());
     camera.attachControl(canvas, true);
 
-    let light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-    light.intensity = 0.7;
+    let light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 50, 0), scene);
+    light.intensity = 0.8;
     
     // let sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
     // sphere.position.y = 1;
+    
     loadAssets(scene);
     makeSkybox(scene); 
 
