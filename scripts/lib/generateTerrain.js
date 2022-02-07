@@ -1,11 +1,15 @@
 import {noise} from './noise.js';
 
-export function generateTerrain(scene, grass, treeMeshes, grassMeshes) {
+export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     // Map data creation
         // The map is a flat array of successive 3D coordinates (x, y, z).
         // It's defined by a number of points on its width : mapSubX
         // and a number of points on its height : mapSubZ
+
+        let treeMeshes = treeglb.loadedMeshes;
+        let grassMeshes = grassglb.loadedMeshes;
+        
 
         var mapSubX = 1000;             // point number on X axis
         var mapSubZ = 1000;              // point number on Z axis
@@ -17,7 +21,7 @@ export function generateTerrain(scene, grass, treeMeshes, grassMeshes) {
 
         // SPMap with 3 object types
         let SPmapData = [[], []];
-        let SPlength = 2;
+        let SPlength = 1;
         let radians = BABYLON.Tools.ToRadians(90);
 
         for (var l = 0; l < mapSubZ; l++) {
@@ -64,15 +68,26 @@ export function generateTerrain(scene, grass, treeMeshes, grassMeshes) {
 
         let mergedTree = BABYLON.Mesh.MergeMeshes([treeMeshes[1], treeMeshes[2], treeMeshes[3], treeMeshes[4], treeMeshes[5], treeMeshes[6], treeMeshes[7], treeMeshes[8]], true, true);
         let mergedGrass = BABYLON.Mesh.MergeMeshes([grassMeshes[1], grassMeshes[2], grassMeshes[3]], true, true);
+        mergedGrass.material = grassglb.loadedContainer.materials[0];
+
+        let multimat = new BABYLON.MultiMaterial("treeWhole", scene);
+        multimat.subMaterials.push(treeglb.loadedContainer.materials[0]);
+        multimat.subMaterials.push(treeglb.loadedContainer.materials[1]);
 
         // SPS to depict the objects the SPMap
 
         let sps = new BABYLON.SolidParticleSystem("sps", scene);
         let treeParticle = sps.addShape(mergedTree, 1000);
-        let grassParticle = sps.addShape(mergedGrass, 1000);
+        // let grassParticle = sps.addShape(mergedGrass, 1000);
         // var typ3 = sps.addShape(model3, 1000);
         
         sps.buildMesh();
+
+        mergedTree.dispose();
+
+        // sps.mesh.material = multimat;
+        sps.mesh.material = treeglb.loadedContainer.materials[1];
+        // sps.mesh.material = treeglb.loadedContainer.materials[0];
 
     grass.uScale = 4.0;
     grass.vScale = grass.uScale;

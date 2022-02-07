@@ -9,13 +9,13 @@ export function loadAssets(scene) {
     });
 
     let textureTask = assetsManager.addTextureTask("vsg_grass_tile", "../../textures/terrain/vsg_grass_tile-1024.jpg");
-    let treeTask = assetsManager.addContainerTask("dogwood", "", "../../models/tree/", "dogwood.glb")
+    let treeTask = assetsManager.addContainerTask("dogwood", "", "../../models/tree/", "dogwood-material.glb")
     let grassTask = assetsManager.addContainerTask("grass", "", "../../models/grass/", "grass.glb")
 
 
     assetsManager.onFinish = function(tasks) {
         console.log(tasks);
-        generateTerrain(scene, tasks[0].texture, tasks[1].loadedMeshes, tasks[2].loadedMeshes);
+        generateTerrain(scene, tasks[0].texture, tasks[1], tasks[2]);
     };
 
 	assetsManager.onTaskError = function(task) {
