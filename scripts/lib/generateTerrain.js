@@ -21,7 +21,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
         // SPMap with 3 object types
         let SPmapData = [[], []];
-        let SPlength = 1;
+        let SPlength = 2;
         let radians = BABYLON.Tools.ToRadians(90);
 
         for (var l = 0; l < mapSubZ; l++) {
@@ -51,7 +51,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
                         SPmapData[index % SPlength].push(xp, yp, zp, 0, ry, 0, scale, scale, scale);
                     }
                 } else if (index % SPlength === 1) {
-                    if (Math.random() > 0.35) {
+                    if (Math.random() > 0.65) {
                         let xp = x;
                         let yp = y;
                         let zp = z;
@@ -66,9 +66,13 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
             }
         }
 
+        let treeTrunk = treeMeshes[1];
+
         let mergedTree = BABYLON.Mesh.MergeMeshes([treeMeshes[1], treeMeshes[2], treeMeshes[3], treeMeshes[4], treeMeshes[5], treeMeshes[6], treeMeshes[7], treeMeshes[8]], true, true);
         let mergedGrass = BABYLON.Mesh.MergeMeshes([grassMeshes[1], grassMeshes[2], grassMeshes[3]], true, true);
         mergedGrass.material = grassglb.loadedContainer.materials[0];
+
+        treeTrunk.material = treeglb.loadedContainer.materials[0];
 
         let multimat = new BABYLON.MultiMaterial("treeWhole", scene);
         multimat.subMaterials.push(treeglb.loadedContainer.materials[0]);
@@ -76,17 +80,17 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
         // SPS to depict the objects the SPMap
 
-        let sps = new BABYLON.SolidParticleSystem("sps", scene);
+        let sps = new BABYLON.SolidParticleSystem("sps", scene, {"enableMultiMaterial": true});
         let treeParticle = sps.addShape(mergedTree, 1000);
-        // let grassParticle = sps.addShape(mergedGrass, 1000);
-        // var typ3 = sps.addShape(model3, 1000);
+        // let treeParticle = sps.addShape(treeTrunk, 1000);
+        let grassParticle = sps.addShape(mergedGrass, 1000);
         
         sps.buildMesh();
 
         mergedTree.dispose();
 
-        // sps.mesh.material = multimat;
-        sps.mesh.material = treeglb.loadedContainer.materials[1];
+        sps.mesh.material = multimat;
+        //sps.mesh.material = treeglb.loadedContainer.materials[1];
         // sps.mesh.material = treeglb.loadedContainer.materials[0];
 
     grass.uScale = 4.0;
