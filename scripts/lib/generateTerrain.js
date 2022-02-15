@@ -21,7 +21,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
         // SPMap with 3 object types
         let SPmapData = [[], []];
-        let SPlength = 2;
+        let SPlength = 1;
         let radians = BABYLON.Tools.ToRadians(90);
 
         for (var l = 0; l < mapSubZ; l++) {
@@ -40,7 +40,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
             
                 // let's populate randomly
                 if (index % SPlength === 0) {
-                    if (Math.random() > 0.99) {
+                    if (Math.random() > 0.9999) {
                         let xp = x;
                         let yp = y;
                         let zp = z;
@@ -66,30 +66,85 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
             }
         }
 
-        let treeTrunk = treeMeshes[1];
+        // let treeTrunk = treeMeshes[2];
+        // let treeCanopy = treeMeshes[1];
 
-        let mergedTree = BABYLON.Mesh.MergeMeshes([treeMeshes[1], treeMeshes[2], treeMeshes[3], treeMeshes[4], treeMeshes[5], treeMeshes[6], treeMeshes[7], treeMeshes[8]], true, true);
-        let mergedGrass = BABYLON.Mesh.MergeMeshes([grassMeshes[1], grassMeshes[2], grassMeshes[3]], true, true);
-        mergedGrass.material = grassglb.loadedContainer.materials[0];
+        let treeCanopy = BABYLON.Mesh.MergeMeshes(
+          [
+            treeMeshes[1],
+            treeMeshes[3],
+            treeMeshes[5],
+            treeMeshes[8],
+          ],
+          true,
+          true
+        );
 
-        treeTrunk.material = treeglb.loadedContainer.materials[0];
+        let treeTrunk = BABYLON.Mesh.MergeMeshes(
+          [treeMeshes[2], treeMeshes[4], treeMeshes[6], treeMeshes[7]],
+          true,
+          true
+        );
 
-        let multimat = new BABYLON.MultiMaterial("treeWhole", scene);
-        multimat.subMaterials.push(treeglb.loadedContainer.materials[0]);
-        multimat.subMaterials.push(treeglb.loadedContainer.materials[1]);
+        // let mergedTree = BABYLON.Mesh.MergeMeshes([treeMeshes[1], treeMeshes[2], treeMeshes[3], treeMeshes[4], treeMeshes[5], treeMeshes[6], treeMeshes[7], treeMeshes[8]], true, true);
+        let grass1, grass2, grass3;
+        grass1 = grassMeshes[1];
+        grass2 = grassMeshes[2];
+        grass3 = grassMeshes[3];
+
+        let grassMaterial = grassglb.loadedContainer.materials[0];
+        grassMaterial.transparencyMode = 3;
+        console.log(grassMaterial.transparencyMode);
+
+        grass1.material = grassMaterial;
+        grass2.material = grassMaterial;
+        grass3.material = grassMaterial;
+
+        let mergedGrass = BABYLON.Mesh.MergeMeshes(
+          [grass1, grass2, grass3],
+          true,
+          true,
+          undefined,
+          false,
+          true
+        );
+        // let mergedGrass = BABYLON.Mesh.MergeMeshes([grassMeshes[1], grassMeshes[2], grassMeshes[3]], true, true);
+        // mergedGrass.material = grassglb.loadedContainer.materials[0];
+
+        let canopyMaterial = treeglb.loadedContainer.materials[0];
+        canopyMaterial.transparencyMode = 3;
+        console.log(canopyMaterial.transparencyMode);
+        treeTrunk.material = treeglb.loadedContainer.materials[1];
+        treeCanopy.material = canopyMaterial;
+
+        // treeCanopy.material.diffuseTexture.hasAlpha = true;
+        
+        let mergedTree = BABYLON.Mesh.MergeMeshes(
+          [treeTrunk, treeCanopy],
+          true,
+          true,
+          undefined,
+          false,
+          true
+        );
 
         // SPS to depict the objects the SPMap
 
-        let sps = new BABYLON.SolidParticleSystem("sps", scene, {"enableMultiMaterial": true});
+        let sps = new BABYLON.SolidParticleSystem("sps", scene, {
+          useModelMaterial: true,
+          enableMultiMaterial: true,
+        });
+
         let treeParticle = sps.addShape(mergedTree, 1000);
         // let treeParticle = sps.addShape(treeTrunk, 1000);
-        let grassParticle = sps.addShape(mergedGrass, 1000);
+        // let grassParticle = sps.addShape(mergedGrass, 1000);
+        // let grassParticle = sps.addShape(grass3, 1000);
         
         sps.buildMesh();
 
-        mergedTree.dispose();
+        // mergedTree.dispose();
 
-        sps.mesh.material = multimat;
+        // sps.mesh.material = multimat;
         //sps.mesh.material = treeglb.loadedContainer.materials[1];
         // sps.mesh.material = treeglb.loadedContainer.materials[0];
 
@@ -100,7 +155,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     // terrain creation
     
-    let terrainSub = 100;
+    let terrainSub = 200;
     let params = {
         mapData: mapData,
         mapSubX: mapSubX,
@@ -116,8 +171,8 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     let terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
     terrainMaterial.diffuseTexture = grass;
     terrain.mesh.material = terrainMaterial;
-    terrain.subToleranceX = 8;
-    terrain.subToleranceZ = 8;
+    terrain.subToleranceX = 20;
+    terrain.subToleranceZ = 20;
     terrain.LODLimits = [4, 3, 2, 1, 1];
     let terrainCreated = true;
 
