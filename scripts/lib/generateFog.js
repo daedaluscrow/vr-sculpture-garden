@@ -24,11 +24,12 @@ export function generateFog(scene, fogTexture) {
     particleSystem.updateSpeed = 0.005;
     particleSystem.isLocal = true;
 
-    console.log(scene);
     particleSystem.start();
+
     scene.registerBeforeRender(() => {
         particleSystem.emitter.x = scene.cameras[0].position.x;
         particleSystem.emitter.z = scene.cameras[0].position.z;
     })
+
     return particleSystem;
 }
