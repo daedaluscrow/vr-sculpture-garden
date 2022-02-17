@@ -1,17 +1,10 @@
-// let fogTexture = new BABYLON.Texture("https://raw.githubusercontent.com/aWeirdo/Babylon.js/master/smoke_15.png", scene);
-
-export function generateFog(fogTexture) {
-    // if (particleSystem) {
-    //     particleSystem.dispose();
-    // }
-
-    let particleSystem = new BABYLON.ParticleSystem("particles", 2500 , scene);
+export function generateFog(scene, fogTexture) {
+    console.log(fogTexture);
+    let particleSystem = new BABYLON.ParticleSystem("particles", 4500 , scene);
     particleSystem.manualEmitCount = particleSystem.getCapacity();
-    particleSystem.minEmitBox = new BABYLON.Vector3(-25, 2, -25); // Starting all from
-    particleSystem.maxEmitBox = new BABYLON.Vector3(25, 2, 25); // To...
-    
+        
     particleSystem.particleTexture = fogTexture.clone();
-    particleSystem.createCylinderEmitter(150, 5, 0, 1);
+    particleSystem.createCylinderEmitter(150, 5, 0, 0);
     
     particleSystem.color1 = new BABYLON.Color4(0.8, 0.8, 0.8, 0.1);
     particleSystem.color2 = new BABYLON.Color4(.95, .95, .95, 0.15);
@@ -29,6 +22,13 @@ export function generateFog(fogTexture) {
     particleSystem.minEmitPower = .5;
     particleSystem.maxEmitPower = 1;
     particleSystem.updateSpeed = 0.005;
+    particleSystem.isLocal = true;
 
+    console.log(scene);
     particleSystem.start();
+    scene.registerBeforeRender(() => {
+        particleSystem.emitter.x = scene.cameras[0].position.x;
+        particleSystem.emitter.z = scene.cameras[0].position.z;
+    })
+    return particleSystem;
 }
