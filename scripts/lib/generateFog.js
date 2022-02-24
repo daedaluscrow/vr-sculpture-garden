@@ -1,10 +1,10 @@
 export function generateFog(scene, fogTexture) {
     console.log(fogTexture);
-    let particleSystem = new BABYLON.ParticleSystem("particles", 4500 , scene);
+    let particleSystem = new BABYLON.ParticleSystem("particles", 5000 , scene);
     particleSystem.manualEmitCount = particleSystem.getCapacity();
         
     particleSystem.particleTexture = fogTexture.clone();
-    particleSystem.createCylinderEmitter(150, 5, 0, 0);
+    particleSystem.createCylinderEmitter(125, 5, 0, 0);
     
     particleSystem.color1 = new BABYLON.Color4(0.8, 0.8, 0.8, 0.1);
     particleSystem.color2 = new BABYLON.Color4(.95, .95, .95, 0.15);
@@ -21,10 +21,12 @@ export function generateFog(scene, fogTexture) {
     particleSystem.maxAngularSpeed = 2;
     particleSystem.minEmitPower = .5;
     particleSystem.maxEmitPower = 1;
-    particleSystem.updateSpeed = 0.005;
+    particleSystem.updateSpeed = 0.01;
     particleSystem.isLocal = true;
 
     particleSystem.start();
+
+    particleSystem.emitter.y = 4;
 
     scene.registerBeforeRender(() => {
         particleSystem.emitter.x = scene.cameras[0].position.x;

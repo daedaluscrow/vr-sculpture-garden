@@ -22,7 +22,6 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
         // SPMap with 3 object types
         let SPmapData = [[], []];
         let SPlength = 1;
-        let radians = BABYLON.Tools.ToRadians(90);
 
         for (var l = 0; l < mapSubZ; l++) {
             for (var w = 0; w < mapSubX; w++) {
