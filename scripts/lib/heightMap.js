@@ -153,9 +153,9 @@ export function generateHeightMap(scene, grass, treeglb, grassglb) {
     };
 
     // Create the map from the height map and call the callback function when done
-    var hmURL = "http://www.babylonjs.com/assets/heightMap.png";  // heightmap file URL
+    var hmURL = "../../textures/heightmap.png";  // heightmap file URL
     var hmOptions = {
-            width: 500, height: 400,          // map size in the World 
+            width: 1000, height: 800,          // map size in the World 
             subX: 1000, subZ: 800,              // number of points on map width and height
             onReady: createTerrain              // callback function declaration
     };
