@@ -157,6 +157,8 @@ export function generateHeightMap(scene, grass, treeglb, grassglb) {
     var hmOptions = {
             width: 1000, height: 800,          // map size in the World 
             subX: 1000, subZ: 800,              // number of points on map width and height
+            maxHeight: 15,
+            minHeight: -1,
             onReady: createTerrain              // callback function declaration
     };
     var mapData = new Float32Array(1000 * 800 * 3); // the array that will store the generated data
