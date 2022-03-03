@@ -1,6 +1,4 @@
-import { generateTerrain } from "./generateTerrain.js";
-import { generateFog } from "./generateFog.js";
-import { generateHeightMap } from "./heightMap.js";
+import { generateTerrain, generateFog } from "./index.js";
 
 export function loadAssets(scene) {
     let assetsManager = new BABYLON.AssetsManager(scene);
@@ -18,9 +16,8 @@ export function loadAssets(scene) {
 
     assetsManager.onFinish = function(tasks) {
         console.log(tasks);
-        // generateTerrain(scene, tasks[0].texture, tasks[1], tasks[2]);
-        generateHeightMap(scene, tasks[0].texture, tasks[1], tasks[2]);
-        let fogPS = generateFog(scene, tasks[3].texture);
+        generateTerrain(scene, tasks[0].texture, tasks[1], tasks[2]);
+        // let fogPS = generateFog(scene, tasks[3].texture);
     };
 
 	assetsManager.onTaskError = function(task) {
