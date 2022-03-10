@@ -5,20 +5,21 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     let floraMeshes = generateFloraMeshes(treeglb, grassglb);
 
-    var createTerrain = function(mapData, mapSubX, mapSubZ) {
+    let createTerrain = function(mapData, mapSubX, mapSubZ) {
           // SPS to depict the objects the SPMap
   
           let sps = new BABYLON.SolidParticleSystem("sps", scene, {
-            // useModelMaterial: true,
-            // enableMultiMaterial: true,
+             useModelMaterial: true,
+             enableMultiMaterial: true,
           });
+          let SPmapData = generateSPMap(mapData, mapSubX, mapSubZ);
   
           let treeParticle = sps.addShape(floraMeshes.trees, 1000);
-          // let treeParticle = sps.addShape(treeTrunk, 1000);
           // let grassParticle = sps.addShape(floraMeshes.grass, 1000);
-          // let grassParticle = sps.addShape(grass3, 1000);
           
           sps.buildMesh();
+
+          console.log(sps);
   
           // mergedTree.dispose();        
         
@@ -27,17 +28,11 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
             mapData: mapData, // the generated data received
             mapSubX: mapSubX,
             mapSubZ: mapSubZ, // the map number of points per dimension
-            // SPmapData: SPmapData,          
-            // sps: sps,
+            SPmapData: SPmapData,          
+            sps: sps,
         };
         terrain = new BABYLON.DynamicTerrain("dt", options, scene);
-        console.log(terrain.getHeightFromMap(0,0))
         floraMeshes.trees.position.y = terrain.getHeightFromMap(0,0);
-        let SPmapData = generateSPMap(terrain, mapSubX, mapSubZ);
-        terrain._sps = sps;
-        terrain._SPmapData = SPmapData;
-        terrain._updateTerrain(true);
-        console.log(terrain);
 
         grass.uScale = 4.0;
         grass.vScale = grass.uScale;
@@ -65,15 +60,17 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     };
 
     // Create the map from the height map and call the callback function when done
-    var hmURL = "../../textures/heightmap.png";  // heightmap file URL
+    var hmURL = "../../textures/heightmap.png"; // heightmap file URL
+    let subX = 1000;
+    let subZ = 800; 
     var hmOptions = {
             width: 1000, height: 800,          // map size in the World 
-            subX: 1000, subZ: 800,              // number of points on map width and height
+            subX: subX, subZ: subZ,              // number of points on map width and height
             maxHeight: 15,
             minHeight: -1,
             onReady: createTerrain              // callback function declaration
     };
-    var mapData = new Float32Array(1000 * 800 * 3); // the array that will store the generated data
+    var mapData = new Float32Array(subX * subZ * 3); // the array that will store the generated data
     let ground = BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(hmURL, hmOptions, mapData, scene);
 }
 
@@ -81,24 +78,26 @@ function generateFloraMeshes(treeglb, grassglb) {
   let treeMeshes = treeglb.loadedMeshes;
   let grassMeshes = grassglb.loadedMeshes;
 
-  let treeCanopy = BABYLON.Mesh.MergeMeshes(
-    [
-      // treeMeshes[1],
-      treeMeshes[3],
-      treeMeshes[5],
-      treeMeshes[8],
-    ],
-    // true,
-    // true
-  );
+  // let treeCanopy = BABYLON.Mesh.MergeMeshes(
+  //   [
+  //     treeMeshes[1],
+  //     treeMeshes[3],
+  //     treeMeshes[5],
+  //     treeMeshes[8],
+  //   ],
+  //   true,
+  //   true
+  // );
+  let treeCanopy = treeMeshes[1];
 
-  let treeTrunk = BABYLON.Mesh.MergeMeshes(
-    [treeMeshes[2], treeMeshes[4], treeMeshes[6], treeMeshes[7]],
-    // true,
-    // true
-  );
+  // let treeTrunk = BABYLON.Mesh.MergeMeshes(
+  //   [treeMeshes[2], treeMeshes[4], treeMeshes[6], treeMeshes[7]],
+  //   true,
+  //   true
+  // );
 
-  // let mergedTree = BABYLON.Mesh.MergeMeshes([treeMeshes[1], treeMeshes[2], treeMeshes[3], treeMeshes[4], treeMeshes[5], treeMeshes[6], treeMeshes[7], treeMeshes[8]], true, true);
+  let treeTrunk = treeMeshes[2];
+
   let grass1, grass2, grass3;
   grass1 = grassMeshes[1];
   grass2 = grassMeshes[2];
@@ -106,7 +105,6 @@ function generateFloraMeshes(treeglb, grassglb) {
 
   let grassMaterial = grassglb.loadedContainer.materials[0];
   grassMaterial.transparencyMode = 3;
-  console.log(grassMaterial.transparencyMode);
 
   grass1.material = grassMaterial;
   grass2.material = grassMaterial;
@@ -120,49 +118,44 @@ function generateFloraMeshes(treeglb, grassglb) {
     false,
     true
   );
-  // let mergedGrass = BABYLON.Mesh.MergeMeshes([grassMeshes[1], grassMeshes[2], grassMeshes[3]], true, true);
-  // mergedGrass.material = grassglb.loadedContainer.materials[0];
-
+  
   let canopyMaterial = treeglb.loadedContainer.materials[0];
   canopyMaterial.transparencyMode = 3;
-  console.log(canopyMaterial.transparencyMode);
-  // treeTrunk.material = treeglb.loadedContainer.materials[1];
-  // treeCanopy.material = canopyMaterial;
-
-  // treeCanopy.material.diffuseTexture.hasAlpha = true;
+  treeTrunk.material = treeglb.loadedContainer.materials[1];
+  treeCanopy.material = canopyMaterial;
+  treeCanopy.material.albedoTexture.hasAlpha = true;
   
-  // let mergedTree = BABYLON.Mesh.MergeMeshes(
-  //   [treeTrunk, treeCanopy],
-  //   true,
-  //   true,
-  //   undefined,
-  //   false,
-  //   true
-  // );
-
-  let mergedTree = treeMeshes[1];
+  let mergedTree = BABYLON.Mesh.MergeMeshes(
+    [treeTrunk, treeCanopy],
+    true,
+    true,
+    undefined,
+    false,
+    true
+  );
 
   return {trees: mergedTree, grass: mergedGrass}
 }
 
-function generateSPMap(terrain, mapSubX, mapSubZ) {
+function generateSPMap(mapData, mapSubX, mapSubZ) {
   let SPmapData = [[], []];
   let SPlength = 1;
+  let loopLocation = 1;
 
-  for (var l = 0; l < mapSubZ; l++) {
-      for (var w = 0; w < mapSubX; w++) {
+  for (let l = 0; l < mapSubZ; l++) {
+      for (let w = 0; w < mapSubX; w++) {
           // objects of the map
           let index = l * mapSubX + w;
-          let xp = (w - mapSubX * 0.5) * 2.0;
-          let zp = (l - mapSubZ * 0.5) * 2.0;
-          // let yp = terrain.getHeightFromMap(xp, zp);
-          let yp = 10;
+          let xp = (w - mapSubX * 0.5);
+          let zp = (l - mapSubZ * 0.5);
+          let yp = mapData[loopLocation];
+          // let yp = 12;
           let ry = Math.random() * 3.6;
           let scale = 0.9 + Math.random();
 
           // let's populate randomly
           if (index % SPlength === 0) {
-              if (Math.random() > 0.9999) {                        
+              if (Math.random() > 0.9994) {                        
                   SPmapData[index % SPlength].push(xp, yp, zp, 0, ry, 0, scale, scale, scale);
               }
           } else if (index % SPlength === 1) {
@@ -170,8 +163,8 @@ function generateSPMap(terrain, mapSubX, mapSubZ) {
                   SPmapData[index % SPlength].push(xp, yp, zp, 0, ry, 0, scale, scale, scale);
               }
           }
+        loopLocation += 3
       }
   }
-
   return SPmapData;
 }

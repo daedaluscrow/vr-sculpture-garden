@@ -25,9 +25,6 @@ async function createScene(){
     let light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 50, 0), scene);
     light.intensity = 0.8;
     
-    // let sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
-    // sphere.position.y = 1;
-    
     loadAssets(scene);
     makeSkybox(scene); 
 
