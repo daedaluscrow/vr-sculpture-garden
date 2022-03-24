@@ -1,3 +1,5 @@
+import { mapData, subX, subZ } from '../../data/index.js';
+
 export function generateTerrain(scene, grass, treeglb, grassglb) {
 // Declare a callback function that will be executed once the heightmap file is downloaded
     // This function is passed the generated data and the number of points on the map height and width
@@ -5,29 +7,29 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     let floraMeshes = generateFloraMeshes(treeglb, grassglb);
 
-    let createTerrain = function(mapData, mapSubX, mapSubZ) {
+    let createTerrain = function() {
           // SPS to depict the objects the SPMap
   
           let sps = new BABYLON.SolidParticleSystem("sps", scene, {
              useModelMaterial: true,
              enableMultiMaterial: true,
           });
-          let SPmapData = generateSPMap(mapData, mapSubX, mapSubZ);
+          let SPmapData = generateSPMap(mapData, subX, subZ);
   
           let treeParticle = sps.addShape(floraMeshes.trees, 1000);
           // let grassParticle = sps.addShape(floraMeshes.grass, 1000);
           
           sps.buildMesh();
 
-          console.log(sps);
+          // console.log(sps);
   
           // mergedTree.dispose();        
         
         var options = {
             terrainSub: 200,  // 100 x 100 quads
             mapData: mapData, // the generated data received
-            mapSubX: mapSubX,
-            mapSubZ: mapSubZ, // the map number of points per dimension
+            mapSubX: subX,
+            mapSubZ: subZ, // the map number of points per dimension
             SPmapData: SPmapData,          
             sps: sps,
         };
@@ -59,19 +61,21 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
         // terrain.updateCameraLOD = function(camera) { ... }
     };
 
+    createTerrain();
+
     // Create the map from the height map and call the callback function when done
-    var hmURL = "../../textures/heightmap.png"; // heightmap file URL
-    let subX = 1000;
-    let subZ = 800; 
-    var hmOptions = {
-            width: 1000, height: 800,          // map size in the World 
-            subX: subX, subZ: subZ,              // number of points on map width and height
-            maxHeight: 15,
-            minHeight: -1,
-            onReady: createTerrain              // callback function declaration
-    };
-    var mapData = new Float32Array(subX * subZ * 3); // the array that will store the generated data
-    let ground = BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(hmURL, hmOptions, mapData, scene);
+    // var hmURL = "../../textures/heightmap.png"; // heightmap file URL
+    // let subX = 1000;
+    // let subZ = 800; 
+    // var hmOptions = {
+    //         width: 1000, height: 800,          // map size in the World 
+    //         subX: subX, subZ: subZ,              // number of points on map width and height
+    //         maxHeight: 15,
+    //         minHeight: -1,
+    //         onReady: createTerrain              // callback function declaration
+    // };
+    // var mapData = new Float32Array(subX * subZ * 3); // the array that will store the generated data
+    // let ground = BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(hmURL, hmOptions, mapData, scene);
 }
 
 function generateFloraMeshes(treeglb, grassglb) {
@@ -137,7 +141,7 @@ function generateFloraMeshes(treeglb, grassglb) {
   return {trees: mergedTree, grass: mergedGrass}
 }
 
-function generateSPMap(mapData, mapSubX, mapSubZ) {
+function generateSPMap(mapSubX, mapSubZ) {
   let SPmapData = [[], []];
   let SPlength = 1;
   let loopLocation = 1;
