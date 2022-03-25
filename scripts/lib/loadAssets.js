@@ -1,5 +1,4 @@
-import { generateTerrain, generateFog, placeSculptures } from "./index.js";
-import { sculptures } from "../../data/sculptures.js";
+import { generateTerrain, generateFog, loadSculptures } from "./index.js";
 
 export function loadAssets(scene) {
     let assetsManager = new BABYLON.AssetsManager(scene);
@@ -13,14 +12,10 @@ export function loadAssets(scene) {
     let treeTask = assetsManager.addContainerTask("dogwood", "", "../../models/tree/", "dogwood-material.glb")
     let grassTask = assetsManager.addContainerTask("grass", "", "../../models/grass/", "grass.glb")
     let fogTask = assetsManager.addTextureTask("fog", "../../textures/fog.png");
-    let sculptureTasks = sculptures.map((sculpture, index) => {
-        return assetsManager.addContainerTask(sculpture.name, "", "../../models/sculptures/", sculpture.filename);
-    })
-
+    
     assetsManager.onFinish = function(tasks) {
-        // console.log(tasks);
         generateTerrain(scene, tasks[0].texture, tasks[1], tasks[2]);
-        placeSculptures(scene, sculptureTasks)
+        loadSculptures(scene)
         // let fogPS = generateFog(scene, tasks[3].texture);
     };
 
