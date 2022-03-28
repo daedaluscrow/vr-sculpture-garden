@@ -1,31 +1,18 @@
 import { mapData, subX, subZ } from "../../data/index.js";
-import { sculptures } from "../../data/sculptures.js";
 
-export function loadSculptures(scene) {
+export function placeSculptures(scene, sculptures) {
+//   console.log(sculptures);
   sculptures.forEach((sculpture, index) => {
-    BABYLON.SceneLoader.ImportMesh(
-      "",
-      "../../models/sculptures/",
-      sculpture.filename,
-      scene,
-      function (meshes) {
-        placeSculptures(scene, meshes[1], index);
-      }
-    );
-  });
-}
+    let model = sculpture.meshes[1];
+    // console.log(model);
 
-function placeSculptures(scene, sculpture, index) {
-  console.log(sculpture);
-  let model = sculpture;
-  console.log(model);
-
-  let bounding = model.getBoundingInfo().boundingBox.minimum;
-  let location = 15 * (index + 1);
-  console.log(bounding);
-  model.position.x = location;
-  model.position.z = location;
-  model.position.y = mapData[getY(location, location)] + -bounding.y;
+    let bounding = model.getBoundingInfo().boundingBox.minimum;
+    let location = 15 * (index + 1);
+    // console.log(bounding);
+    model.position.x = location;
+    model.position.z = location;
+    model.position.y = mapData[getY(location, location)] + -bounding.y;
+  })
 }
 
 function getY(x, z) {

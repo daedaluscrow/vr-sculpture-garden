@@ -4,8 +4,31 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   // Declare a callback function that will be executed once the heightmap file is downloaded
   // This function is passed the generated data and the number of points on the map height and width
   let terrain;
+  console.log(treeglb.meshes.slice(1))
 
-  let floraMeshes = generateFloraMeshes(treeglb, grassglb);
+  // let floraMeshes = generateFloraMeshes(treeglb, grassglb);
+  let canopy = treeglb.meshes[1];
+  let trunk = treeglb.meshes[2];
+  let treeParent = new BABYLON.Mesh("treeParent", scene);
+  canopy.material.transparencyMode = 3;
+  canopy.material.albedoTexture.hasAlpha = true;
+  canopy.setParent(treeParent);
+  trunk.setParent(treeParent);
+  console.log(treeParent);
+  console.log(trunk);
+
+  let trees = BABYLON.Mesh.MergeMeshes(treeglb.meshes.slice(1),
+    true,
+    true,
+    undefined,
+    false,
+    true);
+
+  trees.material.transparencyMode = 3;
+  console.log(trees.material);
+  // trees.material.albedoTexture.hasAlpha = true;
+
+  let floraMeshes = {trees: trees, grass: grassglb.meshes[1]}
 
   let createTerrain = function () {
     // SPS to depict the objects the SPMap
@@ -14,7 +37,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       useModelMaterial: true,
       enableMultiMaterial: true,
     });
-    let SPmapData = generateSPMap(mapData, subX, subZ);
+    let SPmapData = generateSPMap(subX, subZ);
 
     let treeParticle = sps.addShape(floraMeshes.trees, 1000);
     // let grassParticle = sps.addShape(floraMeshes.grass, 1000);
@@ -30,8 +53,8 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       mapData: mapData, // the generated data received
       mapSubX: subX,
       mapSubZ: subZ, // the map number of points per dimension
-      // SPmapData: SPmapData,
-      // sps: sps,
+      SPmapData: SPmapData,
+      sps: sps,
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
     floraMeshes.trees.position.y = terrain.getHeightFromMap(0, 0);
@@ -82,8 +105,10 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 }
 
 function generateFloraMeshes(treeglb, grassglb) {
-  let treeMeshes = treeglb.loadedMeshes;
-  let grassMeshes = grassglb.loadedMeshes;
+  // let treeMeshes = treeglb.loadedMeshes;
+  // let grassMeshes = grassglb.loadedMeshes;
+  let treeMeshes = treeglb.meshes;
+  let grassMeshes = grassglb.meshes;
 
   // let treeCanopy = BABYLON.Mesh.MergeMeshes(
   //   [
@@ -110,12 +135,12 @@ function generateFloraMeshes(treeglb, grassglb) {
   grass2 = grassMeshes[2];
   grass3 = grassMeshes[3];
 
-  let grassMaterial = grassglb.loadedContainer.materials[0];
-  grassMaterial.transparencyMode = 3;
+  // let grassMaterial = grassglb.loadedContainer.materials[0];
+  // grassMaterial.transparencyMode = 3;
 
-  grass1.material = grassMaterial;
-  grass2.material = grassMaterial;
-  grass3.material = grassMaterial;
+  // grass1.material = grassMaterial;
+  // grass2.material = grassMaterial;
+  // grass3.material = grassMaterial;
 
   let mergedGrass = BABYLON.Mesh.MergeMeshes(
     [grass1, grass2, grass3],
@@ -126,10 +151,11 @@ function generateFloraMeshes(treeglb, grassglb) {
     true
   );
 
-  let canopyMaterial = treeglb.loadedContainer.materials[0];
-  canopyMaterial.transparencyMode = 3;
-  treeTrunk.material = treeglb.loadedContainer.materials[1];
-  treeCanopy.material = canopyMaterial;
+  // let canopyMaterial = treeglb.loadedContainer.materials[0];
+  // canopyMaterial.transparencyMode = 3;
+  // treeTrunk.material = treeglb.loadedContainer.materials[1];
+  // treeCanopy.material = canopyMaterial;
+  treeCanopy.material.transparencyMode = 3;
   treeCanopy.material.albedoTexture.hasAlpha = true;
 
   let mergedTree = BABYLON.Mesh.MergeMeshes(
@@ -159,7 +185,6 @@ function generateSPMap(mapSubX, mapSubZ) {
       // let yp = 12;
       let ry = Math.random() * 3.6;
       let scale = 0.9 + Math.random();
-
       // let's populate randomly
       if (index % SPlength === 0) {
         if (Math.random() > 0.9994) {
@@ -193,5 +218,6 @@ function generateSPMap(mapSubX, mapSubZ) {
       loopLocation += 3;
     }
   }
+  console.log(SPmapData);
   return SPmapData;
 }
