@@ -1,20 +1,49 @@
 import { mapData, subX, subZ } from "../../data/index.js";
+const jumpNumber = 50;
+let placeX = 0;
+let placeZ = 0;
+let loopCount = 0
 
 export function placeSculptures(scene, sculptures) {
-//   console.log(sculptures);
   sculptures.forEach((sculpture, index) => {
+    let location = locateSculpture(index);
+    console.log(location);
     let model = sculpture.meshes[1];
-    // console.log(model);
-
     let bounding = model.getBoundingInfo().boundingBox.minimum;
-    let location = 15 * (index + 1);
-    // console.log(bounding);
-    model.position.x = location;
-    model.position.z = location;
-    model.position.y = mapData[getY(location, location)] + -bounding.y;
+    model.position.x = location.x;
+    model.position.z = location.z;
+    model.position.y = mapData[getY(location.x, location.z)] + -bounding.y;
   })
 }
 
 function getY(x, z) {
   return ((x - -(subZ / 2)) * subX + (z - -(subX / 2))) * 3 + 1;
+}
+
+function locateSculpture(index) {
+  let jumpIndex = jumpNumber * loopCount;
+   
+  switch(true) {
+    case placeZ === jumpIndex && placeX !== -jumpIndex:
+      placeX -= jumpNumber;
+      break;
+    case placeX === -jumpIndex && placeZ !== -jumpIndex:
+      placeZ -= jumpNumber;
+      break;
+    case placeZ === -jumpIndex && placeX !== jumpIndex:
+      placeX += jumpNumber;
+      break;
+    case placeX === jumpIndex && placeZ !== jumpIndex:
+      placeZ += jumpNumber;
+      break;
+  }
+
+  if (placeX === jumpIndex && placeZ === jumpIndex) {
+    loopCount += 1;
+    placeX += jumpNumber;
+    placeZ += jumpNumber;
+    return {x: placeX, z: placeZ }
+  }
+  
+  return {x: placeX, z: placeZ} 
 }

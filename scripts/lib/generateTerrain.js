@@ -4,7 +4,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   // Declare a callback function that will be executed once the heightmap file is downloaded
   // This function is passed the generated data and the number of points on the map height and width
   let terrain;
-  console.log(treeglb.meshes.slice(1))
+  // console.log(treeglb.meshes.slice(1))
 
   // let floraMeshes = generateFloraMeshes(treeglb, grassglb);
   let canopy = treeglb.meshes[1];
@@ -14,8 +14,8 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   canopy.material.albedoTexture.hasAlpha = true;
   canopy.setParent(treeParent);
   trunk.setParent(treeParent);
-  console.log(treeParent);
-  console.log(trunk);
+  // console.log(treeParent);
+  // console.log(trunk);
 
   let trees = BABYLON.Mesh.MergeMeshes(treeglb.meshes.slice(1),
     true,
@@ -25,7 +25,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     true);
 
   trees.material.transparencyMode = 3;
-  console.log(trees.material);
+  // console.log(trees.material);
   // trees.material.albedoTexture.hasAlpha = true;
 
   let floraMeshes = {trees: trees, grass: grassglb.meshes[1]}
@@ -218,6 +218,6 @@ function generateSPMap(mapSubX, mapSubZ) {
       loopLocation += 3;
     }
   }
-  console.log(SPmapData);
+  // console.log(SPmapData);
   return SPmapData;
 }
