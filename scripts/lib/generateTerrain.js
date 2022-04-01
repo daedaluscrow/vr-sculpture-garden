@@ -17,18 +17,20 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   // console.log(treeParent);
   // console.log(trunk);
 
-  let trees = BABYLON.Mesh.MergeMeshes(treeglb.meshes.slice(1),
+  let trees = BABYLON.Mesh.MergeMeshes(
+    treeglb.meshes.slice(1),
     true,
     true,
     undefined,
     false,
-    true);
+    true
+  );
 
   trees.material.transparencyMode = 3;
   // console.log(trees.material);
   // trees.material.albedoTexture.hasAlpha = true;
 
-  let floraMeshes = {trees: trees, grass: grassglb.meshes[1]}
+  let floraMeshes = { trees: trees, grass: grassglb.meshes[1] };
 
   let createTerrain = function () {
     // SPS to depict the objects the SPMap
@@ -39,7 +41,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     });
     let SPmapData = generateSPMap(subX, subZ);
 
-    let treeParticle = sps.addShape(floraMeshes.trees, 1000);
+    let treeParticle = sps.addShape(floraMeshes.trees, 100);
     // let grassParticle = sps.addShape(floraMeshes.grass, 1000);
 
     sps.buildMesh();
