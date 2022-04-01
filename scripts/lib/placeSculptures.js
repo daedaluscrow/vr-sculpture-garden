@@ -1,10 +1,12 @@
 import { mapData, subX, subZ } from "../../data/index.js";
 import config from "../../config.js";
+import { mulberry32 } from "./prng.js";
 
 const gardenSpacing = config.gardenSpacing;
 let placeX = 0;
 let placeZ = 0;
 let loopCount = 0;
+let prng = mulberry32(config.sculptureSpacingSeed);
 
 export function placeSculptures(scene, sculptures) {
   sculptures.forEach((sculpture, index) => {
@@ -47,5 +49,18 @@ function locateSculpture(index) {
     return { x: placeX, z: placeZ };
   }
 
-  return { x: placeX, z: placeZ };
+  return randomizeLocation({ x: placeX, z: placeZ });
+}
+
+function randomizeLocation(location) {
+  const boundingArea = gardenSpacing / 2;
+  let randomX =
+    Math.random() > 0.5
+      ? location.x - prng() * boundingArea
+      : location.x + prng() * boundingArea;
+  let randomZ =
+    Math.random() > 0.5
+      ? location.z - prng() * boundingArea
+      : location.z + prng() * boundingArea;
+  return { x: parseInt(randomX), z: parseInt(randomZ) };
 }
