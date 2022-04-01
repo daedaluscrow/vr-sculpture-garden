@@ -1,5 +1,7 @@
 import { mapData, subX, subZ } from "../../data/index.js";
-const jumpNumber = 50;
+import config from "../../config.js";
+
+const gardenSpacing = config.gardenSpacing;
 let placeX = 0;
 let placeZ = 0;
 let loopCount = 0;
@@ -13,11 +15,6 @@ export function placeSculptures(scene, sculptures) {
     model.position.x = location.x;
     model.position.z = location.z;
     model.position.y = mapData[getY(location.x, location.z)] + -bounding.y;
-    console.log(
-      `x=${location.x}, z=${location.z}, y=${
-        mapData[getY(location.x, location.z)]
-      }, yindex=${getY(location.x, location.z)}`
-    );
   });
 }
 
@@ -26,27 +23,27 @@ function getY(x, z) {
 }
 
 function locateSculpture(index) {
-  let jumpIndex = jumpNumber * loopCount;
+  let gardenSpacingIndex = gardenSpacing * loopCount;
 
   switch (true) {
-    case placeZ === jumpIndex && placeX !== -jumpIndex:
-      placeX -= jumpNumber;
+    case placeZ === gardenSpacingIndex && placeX !== -gardenSpacingIndex:
+      placeX -= gardenSpacing;
       break;
-    case placeX === -jumpIndex && placeZ !== -jumpIndex:
-      placeZ -= jumpNumber;
+    case placeX === -gardenSpacingIndex && placeZ !== -gardenSpacingIndex:
+      placeZ -= gardenSpacing;
       break;
-    case placeZ === -jumpIndex && placeX !== jumpIndex:
-      placeX += jumpNumber;
+    case placeZ === -gardenSpacingIndex && placeX !== gardenSpacingIndex:
+      placeX += gardenSpacing;
       break;
-    case placeX === jumpIndex && placeZ !== jumpIndex:
-      placeZ += jumpNumber;
+    case placeX === gardenSpacingIndex && placeZ !== gardenSpacingIndex:
+      placeZ += gardenSpacing;
       break;
   }
 
-  if (placeX === jumpIndex && placeZ === jumpIndex) {
+  if (placeX === gardenSpacingIndex && placeZ === gardenSpacingIndex) {
     loopCount += 1;
-    placeX += jumpNumber;
-    placeZ += jumpNumber;
+    placeX += gardenSpacing;
+    placeZ += gardenSpacing;
     return { x: placeX, z: placeZ };
   }
 
