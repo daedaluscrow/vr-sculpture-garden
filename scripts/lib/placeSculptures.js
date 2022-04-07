@@ -8,15 +8,30 @@ let placeZ = 0;
 let loopCount = 0;
 let prng = mulberry32(config.sculptureSpacingSeed);
 
-export function placeSculptures(scene, sculptures) {
+export function placeSculptures(scene, sculptures, pedestal) {
+  
+  let pedestalMesh = BABYLON.Mesh.MergeMeshes(pedestal.meshes.slice(1), true,
+  true,
+  undefined,
+  false,
+  true);
+
   sculptures.forEach((sculpture, index) => {
+    let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
     let location = locateSculpture(index);
-    console.log(location);
+    // console.log(location);
     let model = sculpture.meshes[1];
+    model.parent = null;
     let bounding = model.getBoundingInfo().boundingBox.minimum;
+    let pedestalBounding = pedestalInstance.getBoundingInfo().boundingBox.maximum;
+    let yLocation = mapData[getY(location.x, location.z)];
+    console.log(pedestalBounding.y);
+    pedestalInstance.position.x = location.x;
+    pedestalInstance.position.z = location.z;
+    pedestalInstance.position.y = yLocation - 2;
     model.position.x = location.x;
     model.position.z = location.z;
-    model.position.y = mapData[getY(location.x, location.z)] + -bounding.y;
+    model.position.y = yLocation + pedestalBounding.y -2 + -bounding.y;
   });
 }
 

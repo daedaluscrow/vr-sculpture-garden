@@ -38,6 +38,8 @@ async function createScene(){
       },
     });
 
+    // scene.debugLayer.show()
+
     return scene;
 }
 

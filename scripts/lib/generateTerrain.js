@@ -1,32 +1,29 @@
 import { mapData, subX, subZ } from "../../data/index.js";
+import config from "../../config.js";
+import { mulberry32 } from "./prng.js";
+let prng = mulberry32(config.foliageLocationSeed);
 
 export function generateTerrain(scene, grass, treeglb, grassglb) {
-  // Declare a callback function that will be executed once the heightmap file is downloaded
-  // This function is passed the generated data and the number of points on the map height and width
-  let terrain;
-  let tree = generateMergedMesh(treeglb);
 
-  tree.isVisible = false;
+  let terrain;
+  let treeMesh = generateMergedMesh(treeglb, true, 0);
+  let grassMesh = generateMergedMesh(grassglb, true, 0);
+
+  treeMesh.isVisible = false;
 
   for (var i = 0; i < 1000; i++) {
-    tree.createInstance("trees" + i);
+    treeMesh.createInstance("trees" + i);
   }
 
-  var sourceMeshes = [tree];
+  for (var i = 0; i < 5000; i++) {
+    grassMesh.createInstance("trees" + i);
+  }
+
+  var sourceMeshes = [treeMesh, grassMesh];
 
   let createTerrain = function () {
-    // SPS to depict the objects the SPMap
-
-    // let sps = new BABYLON.SolidParticleSystem("sps", scene, {
-    //   useModelMaterial: true,
-    //   enableMultiMaterial: true,
-    // });
-    let SPmapData = generateSPMap(subX, subZ);
-
-    // let treeParticle = sps.addShape(floraMeshes.trees, 100);
-    // // let grassParticle = sps.addShape(floraMeshes.grass, 1000);
-
-    // sps.buildMesh();
+  
+    let instanceMapData = generateInstanceMap(subX, subZ);
 
     // mergedTree.dispose();
 
@@ -35,23 +32,20 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       mapData: mapData, // the generated data received
       mapSubX: subX,
       mapSubZ: subZ, // the map number of points per dimension
-      // SPmapData: SPmapData,
-      // sps: sps,
-      instanceMapData: SPmapData,
+      instanceMapData: instanceMapData,
       sourceMeshes: sourceMeshes,
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
-    // floraMeshes.trees.position.y = terrain.getHeightFromMap(0, 0);
-
+  
     grass.uScale = 4.0;
     grass.vScale = grass.uScale;
 
     let terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
     terrainMaterial.diffuseTexture = grass;
     terrain.mesh.material = terrainMaterial;
-    terrain.subToleranceX = 20;
-    terrain.subToleranceZ = 20;
-    terrain.LODLimits = [4, 3, 2, 1, 1];
+    // terrain.subToleranceX = 20;
+    // terrain.subToleranceZ = 20;
+    // terrain.LODLimits = [4, 3, 2, 1, 1];
 
     let terrainCreated = true;
 
@@ -73,59 +67,11 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   createTerrain();
 }
 
-function generateMergedMesh(glbFile) {
+function generateMergedMesh(glbFile, hasTransparency, meshWithTransparency) {
   let meshes = glbFile.meshes;
 
-  // let treeCanopy = BABYLON.Mesh.MergeMeshes(
-  //   [
-  //     treeMeshes[1],
-  //     treeMeshes[3],
-  //     treeMeshes[5],
-  //     treeMeshes[8],
-  //   ],
-  //   true,
-  //   true
-  // );
-  let treeCanopy = meshes[1];
-
-  // let treeTrunk = BABYLON.Mesh.MergeMeshes(
-  //   [treeMeshes[2], treeMeshes[4], treeMeshes[6], treeMeshes[7]],
-  //   true,
-  //   true
-  // );
-
-  let treeTrunk = meshes[2];
-
-  // let grass1, grass2, grass3;
-  // grass1 = grassMeshes[1];
-  // grass2 = grassMeshes[2];
-  // grass3 = grassMeshes[3];
-
-  // let grassMaterial = grassglb.loadedContainer.materials[0];
-  // grassMaterial.transparencyMode = 3;
-
-  // grass1.material = grassMaterial;
-  // grass2.material = grassMaterial;
-  // grass3.material = grassMaterial;
-
-  // let mergedGrass = BABYLON.Mesh.MergeMeshes(
-  //   [grass1, grass2, grass3],
-  //   true,
-  //   true,
-  //   undefined,
-  //   false,
-  //   true
-  // );
-
-  // let canopyMaterial = treeglb.loadedContainer.materials[0];
-  // canopyMaterial.transparencyMode = 3;
-  // treeTrunk.material = treeglb.loadedContainer.materials[1];
-  // treeCanopy.material = canopyMaterial;
-  treeCanopy.material.transparencyMode = 3;
-  treeCanopy.material.albedoTexture.hasAlpha = true;
-
-  let mergedTree = BABYLON.Mesh.MergeMeshes(
-    [treeTrunk, treeCanopy],
+  let mergedMesh = BABYLON.Mesh.MergeMeshes(
+    meshes.slice(1),
     true,
     true,
     undefined,
@@ -133,17 +79,20 @@ function generateMergedMesh(glbFile) {
     true
   );
 
-  mergedTree.isVisible = false;
-  // mergedTree.dispose();
-  treeTrunk.dispose();
-  treeCanopy.dispose();
+  // meshWithTransparency.forEach(meshIndex => {
+  //   if(hasTransparency) mergedMesh.material.subMaterials[meshIndex].transparencyMode = 3;
+  // })
 
-  return mergedTree;
+  if(hasTransparency) mergedMesh.material.subMaterials[meshWithTransparency].transparencyMode = 3;
+
+  // console.log(mergedMesh.subMeshes[0]._mesh.material.transparencyMode)
+
+  return mergedMesh;
 }
 
-function generateSPMap(mapSubX, mapSubZ) {
-  let SPmapData = [[], []];
-  let SPlength = 1;
+function generateInstanceMap(mapSubX, mapSubZ) {
+  let instanceMapData = [[], []];
+  let SPlength = 2;
   let loopLocation = 1;
 
   for (let l = 0; l < mapSubZ; l++) {
@@ -154,12 +103,12 @@ function generateSPMap(mapSubX, mapSubZ) {
       let zp = l - mapSubZ * 0.5;
       let yp = mapData[loopLocation];
       // let yp = 12;
-      let ry = Math.random() * 3.6;
-      let scale = 0.9 + Math.random();
+      let ry = prng() * 3.6;
+      let scale = 0.9 + prng();
       // let's populate randomly
       if (index % SPlength === 0) {
-        if (Math.random() > 0.9994) {
-          SPmapData[index % SPlength].push(
+        if (prng() > 0.9994) {
+          instanceMapData[index % SPlength].push(
             xp,
             yp,
             zp,
@@ -172,8 +121,8 @@ function generateSPMap(mapSubX, mapSubZ) {
           );
         }
       } else if (index % SPlength === 1) {
-        if (Math.random() > 0.65) {
-          SPmapData[index % SPlength].push(
+        if (prng() > 0.90) {
+          instanceMapData[index % SPlength].push(
             xp,
             yp,
             zp,
@@ -189,6 +138,5 @@ function generateSPMap(mapSubX, mapSubZ) {
       loopLocation += 3;
     }
   }
-  // console.log(SPmapData);
-  return SPmapData;
+  return instanceMapData;
 }
