@@ -1,4 +1,4 @@
-import { mapData, subX, subZ } from "../../data/index.js";
+import { mapData, subX, subZ, width, height } from "../../data/index.js";
 import config from "../../config.js";
 import { mulberry32 } from "./prng.js";
 
@@ -36,7 +36,7 @@ export function placeSculptures(scene, sculptures, pedestal) {
 }
 
 function getY(x, z) {
-  return ((z - -(subZ / 2)) * subX + (x - -(subX / 2))) * 3 + 1;
+  return ((z - -(height / 2)) * width + (x - -(width / 2))) * 3 + 1;
 }
 
 function locateSculpture(index) {

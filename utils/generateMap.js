@@ -2,20 +2,27 @@
 var hmURL = "../../textures/heightmap.png"; // heightmap file URL
 let subX = 1000;
 let subZ = 800;
+
+const outputMap = (mapData) => {
+  console.log(mapData)
+}
+
 var hmOptions = {
-  width: 1000,
-  height: 800, // map size in the World
+  width: 2000,
+  height: 1600, // map size in the World
   subX: subX,
   subZ: subZ, // number of points on map width and height
   maxHeight: 15,
   minHeight: -1,
-  onReady: createTerrain, // callback function declaration
+  onReady: outputMap, // callback function declaration
 };
 var mapData = new Float32Array(subX * subZ * 3); // the array that will store the generated data
-let ground = BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(
-  hmURL,
-  hmOptions,
-  mapData,
-  scene
-);
-console.log(mapData);
+export function generateMap() {
+  let ground = BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(
+    hmURL,
+    hmOptions,
+    mapData,
+    scene
+  );
+} 
+

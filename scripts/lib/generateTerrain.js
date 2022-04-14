@@ -1,4 +1,5 @@
-import { mapData, subX, subZ } from "../../data/index.js";
+// import { mapData, subX, subZ } from "../../data/index.js";
+import { mapData, subX, subZ, width, height } from "../../data/mapData2.js";
 import config from "../../config.js";
 import { mulberry32 } from "./prng.js";
 let prng = mulberry32(config.foliageLocationSeed);
@@ -23,12 +24,12 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
   let createTerrain = function () {
   
-    let instanceMapData = generateInstanceMap(subX, subZ);
+    let instanceMapData = generateInstanceMap(width, height);
 
     // mergedTree.dispose();
 
     var options = {
-      terrainSub: 200, // 100 x 100 quads
+      terrainSub: 250, // 100 x 100 quads
       mapData: mapData, // the generated data received
       mapSubX: subX,
       mapSubZ: subZ, // the map number of points per dimension
@@ -43,9 +44,9 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     let terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
     terrainMaterial.diffuseTexture = grass;
     terrain.mesh.material = terrainMaterial;
-    // terrain.subToleranceX = 20;
-    // terrain.subToleranceZ = 20;
-    // terrain.LODLimits = [4, 3, 2, 1, 1];
+    terrain.subToleranceX = 5;
+    terrain.subToleranceZ = 5;
+    // terrain.LODLimits = [4];
 
     let terrainCreated = true;
 
@@ -53,6 +54,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     let camAltitude = 0.0;
     scene.registerBeforeRender(function () {
       if (terrainCreated) {
+        terrain.update(true);
         let currentCamera = scene.activeCamera;
         camAltitude =
           terrain.getHeightFromMap(
@@ -63,7 +65,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       }
     });
   };
-
+  
   createTerrain();
 }
 

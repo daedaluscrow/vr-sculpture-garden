@@ -1,4 +1,5 @@
 import { makeSkybox, loadAssets } from "./lib/index.js";
+// import { generateMap } from "../utils/generateMap.js";
 
 const canvas = document.getElementById("renderCanvas");
 let engine = null;
@@ -39,7 +40,7 @@ async function createScene(){
     });
 
     // scene.debugLayer.show()
-
+    // generateMap();
     return scene;
 }
 
