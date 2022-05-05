@@ -1,5 +1,5 @@
 // import { mapData, subX, subZ } from "../../data/index.js";
-import { mapData, subX, subZ, width, height } from "../../data/mapData2.js";
+import { mapData, subX, subZ } from "../../data/mapData2.js";
 import config from "../../config.js";
 import { mulberry32 } from "./prng.js";
 let prng = mulberry32(config.foliageLocationSeed);
@@ -24,15 +24,15 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
   let createTerrain = function () {
   
-    let instanceMapData = generateInstanceMap(width, height);
+    let instanceMapData = generateInstanceMap();
 
     // mergedTree.dispose();
 
     var options = {
-      terrainSub: 250, // 100 x 100 quads
+      terrainSub: 250, 
       mapData: mapData, // the generated data received
       mapSubX: subX,
-      mapSubZ: subZ, // the map number of points per dimension
+      mapSubZ: subZ, 
       instanceMapData: instanceMapData,
       sourceMeshes: sourceMeshes,
     };
@@ -92,24 +92,23 @@ function generateMergedMesh(glbFile, hasTransparency, meshWithTransparency) {
   return mergedMesh;
 }
 
-function generateInstanceMap(mapSubX, mapSubZ) {
+function generateInstanceMap() {
   let instanceMapData = [[], []];
   let SPlength = 2;
   let loopLocation = 1;
 
-  for (let l = 0; l < mapSubZ; l++) {
-    for (let w = 0; w < mapSubX; w++) {
+  for (let l = 0; l < subZ; l++) {
+    for (let w = 0; w < subX; w++) {
       // objects of the map
-      let index = l * mapSubX + w;
-      let xp = w - mapSubX * 0.5;
-      let zp = l - mapSubZ * 0.5;
+      let index = l * subX + w;
+      let xp = (w - subX * 0.5) * 2;
+      let zp = (l - subZ * 0.5) * 2;
       let yp = mapData[loopLocation];
       // let yp = 12;
       let ry = prng() * 3.6;
       let scale = 0.9 + prng();
-      // let's populate randomly
       if (index % SPlength === 0) {
-        if (prng() > 0.9994) {
+        if (prng() > 0.997) {
           instanceMapData[index % SPlength].push(
             xp,
             yp,

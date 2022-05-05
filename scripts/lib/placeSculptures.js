@@ -1,4 +1,4 @@
-import { mapData, subX, subZ, width, height } from "../../data/index.js";
+import { mapData, subX, subZ } from "../../data/index.js";
 import config from "../../config.js";
 import { mulberry32 } from "./prng.js";
 
@@ -19,6 +19,8 @@ export function placeSculptures(scene, sculptures, pedestal) {
   sculptures.forEach((sculpture, index) => {
     let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
     let location = locateSculpture(index);
+    // location.x = 2 * Math.round(location.x / 2)
+    // location.z = 2 * Math.round(location.z / 2)
     // console.log(location);
     let model = sculpture.meshes[1];
     model.parent = null;
@@ -36,7 +38,8 @@ export function placeSculptures(scene, sculptures, pedestal) {
 }
 
 function getY(x, z) {
-  return ((z - -(height / 2)) * width + (x - -(width / 2))) * 3 + 1;
+  // console.log(`The values of x is ${x} and z is ${z}`)
+  return ((z - -(subZ / 2)) * subX + (x - -(subX / 2))) * 3 + 1;
 }
 
 function locateSculpture(index) {
@@ -64,11 +67,11 @@ function locateSculpture(index) {
     return { x: placeX, z: placeZ };
   }
 
-  return randomizeLocation({ x: placeX, z: placeZ });
+  return randomizeLocation({ x: placeX, z: placeZ});
 }
 
 function randomizeLocation(location) {
-  const boundingArea = gardenSpacing / 2;
+  const boundingArea = gardenSpacing / 2.5;
   let randomX =
     Math.random() > 0.5
       ? location.x - prng() * boundingArea
