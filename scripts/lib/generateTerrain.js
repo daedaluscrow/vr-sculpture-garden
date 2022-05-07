@@ -5,7 +5,6 @@ import { mulberry32 } from "./prng.js";
 let prng = mulberry32(config.foliageLocationSeed);
 
 export function generateTerrain(scene, grass, treeglb, grassglb) {
-
   let terrain;
   let treeMesh = generateMergedMesh(treeglb, true, 0);
   let grassMesh = generateMergedMesh(grassglb, true, 0);
@@ -23,29 +22,28 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   var sourceMeshes = [treeMesh, grassMesh];
 
   let createTerrain = function () {
-  
     let instanceMapData = generateInstanceMap();
 
     // mergedTree.dispose();
 
     var options = {
-      terrainSub: 250, 
+      terrainSub: 250,
       mapData: mapData, // the generated data received
       mapSubX: subX,
-      mapSubZ: subZ, 
+      mapSubZ: subZ,
       instanceMapData: instanceMapData,
       sourceMeshes: sourceMeshes,
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
-  
+
     grass.uScale = 4.0;
     grass.vScale = grass.uScale;
 
     let terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
     terrainMaterial.diffuseTexture = grass;
     terrain.mesh.material = terrainMaterial;
-    terrain.subToleranceX = 5;
-    terrain.subToleranceZ = 5;
+    // terrain.subToleranceX = 5;
+    // terrain.subToleranceZ = 5;
     // terrain.LODLimits = [4];
 
     let terrainCreated = true;
@@ -65,7 +63,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       }
     });
   };
-  
+
   createTerrain();
 }
 
@@ -85,7 +83,8 @@ function generateMergedMesh(glbFile, hasTransparency, meshWithTransparency) {
   //   if(hasTransparency) mergedMesh.material.subMaterials[meshIndex].transparencyMode = 3;
   // })
 
-  if(hasTransparency) mergedMesh.material.subMaterials[meshWithTransparency].transparencyMode = 3;
+  if (hasTransparency)
+    mergedMesh.material.subMaterials[meshWithTransparency].transparencyMode = 3;
 
   // console.log(mergedMesh.subMeshes[0]._mesh.material.transparencyMode)
 
@@ -122,7 +121,7 @@ function generateInstanceMap() {
           );
         }
       } else if (index % SPlength === 1) {
-        if (prng() > 0.90) {
+        if (prng() > 0.9) {
           instanceMapData[index % SPlength].push(
             xp,
             yp,

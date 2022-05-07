@@ -9,36 +9,41 @@ let loopCount = 0;
 let prng = mulberry32(config.sculptureSpacingSeed);
 
 export function placeSculptures(scene, sculptures, pedestal) {
-  
-  let pedestalMesh = BABYLON.Mesh.MergeMeshes(pedestal.meshes.slice(1), true,
-  true,
-  undefined,
-  false,
-  true);
+  let pedestalMesh = BABYLON.Mesh.MergeMeshes(
+    pedestal.meshes.slice(1),
+    true,
+    true,
+    undefined,
+    false,
+    true
+  );
 
   sculptures.forEach((sculpture, index) => {
     let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
     let location = locateSculpture(index);
-    // location.x = 2 * Math.round(location.x / 2)
-    // location.z = 2 * Math.round(location.z / 2)
+    location.xFinal = config.mapFactor * location.x;
+    location.zFinal = config.mapFactor * location.z;
+
     // console.log(location);
     let model = sculpture.meshes[1];
     model.parent = null;
     let bounding = model.getBoundingInfo().boundingBox.minimum;
-    let pedestalBounding = pedestalInstance.getBoundingInfo().boundingBox.maximum;
+    let pedestalBounding =
+      pedestalInstance.getBoundingInfo().boundingBox.maximum;
     let yLocation = mapData[getY(location.x, location.z)];
-    console.log(pedestalBounding.y);
-    pedestalInstance.position.x = location.x;
-    pedestalInstance.position.z = location.z;
+    console.log(getY(location.x, location.z));
+    // console.log(pedestalBounding.y);
+    pedestalInstance.position.x = location.xFinal;
+    pedestalInstance.position.z = location.zFinal;
     pedestalInstance.position.y = yLocation - 2;
-    model.position.x = location.x;
-    model.position.z = location.z;
-    model.position.y = yLocation + pedestalBounding.y -2 + -bounding.y;
+    model.position.x = location.xFinal;
+    model.position.z = location.zFinal;
+    model.position.y = yLocation + pedestalBounding.y - 2 + -bounding.y;
   });
 }
 
 function getY(x, z) {
-  // console.log(`The values of x is ${x} and z is ${z}`)
+  console.log(`The values of x is ${x} and z is ${z}`);
   return ((z - -(subZ / 2)) * subX + (x - -(subX / 2))) * 3 + 1;
 }
 
@@ -67,7 +72,7 @@ function locateSculpture(index) {
     return { x: placeX, z: placeZ };
   }
 
-  return randomizeLocation({ x: placeX, z: placeZ});
+  return randomizeLocation({ x: placeX, z: placeZ });
 }
 
 function randomizeLocation(location) {
