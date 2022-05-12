@@ -1,5 +1,4 @@
-// import { mapData, subX, subZ } from "../../data/index.js";
-import { mapData, subX, subZ } from "../../data/mapData2.js";
+import { mapData, subX, subZ } from "../../data/index.js";
 import config from "../../config.js";
 import { mulberry32 } from "./prng.js";
 let prng = mulberry32(config.foliageLocationSeed);
@@ -10,9 +9,13 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   let grassMesh = generateMergedMesh(grassglb, true, 0);
 
   treeMesh.isVisible = false;
+  treeMesh.receiveShadows = true;
 
   for (var i = 0; i < 1000; i++) {
-    treeMesh.createInstance("trees" + i);
+    let instance = treeMesh.createInstance("trees" + i);
+    scene.shadowGenerator.addShadowCaster(instance);
+    console.log(instance);
+    // instance.receiveShadows = true;
   }
 
   for (var i = 0; i < 5000; i++) {
@@ -36,7 +39,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
 
-    grass.uScale = 4.0;
+    grass.uScale = 20.0;
     grass.vScale = grass.uScale;
 
     let terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
@@ -47,6 +50,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     // terrain.LODLimits = [4];
 
     let terrainCreated = true;
+    terrain.mesh.receiveShadows = true;
 
     let camElevation = 2.0;
     let camAltitude = 0.0;
@@ -122,10 +126,11 @@ function generateInstanceMap() {
         }
       } else if (index % SPlength === 1) {
         if (prng() > 0.9) {
+          let randomized = randomizeLocation({x: xp, z: zp})
           instanceMapData[index % SPlength].push(
-            xp,
+            randomized.x,
             yp,
-            zp,
+            randomized.z,
             0,
             ry,
             0,
@@ -139,4 +144,17 @@ function generateInstanceMap() {
     }
   }
   return instanceMapData;
+}
+
+function randomizeLocation(location) {
+  const boundingArea = 1;
+  let randomX =
+    Math.random() > 0.5
+      ? location.x - prng() * boundingArea
+      : location.x + prng() * boundingArea;
+  let randomZ =
+    Math.random() > 0.5
+      ? location.z - prng() * boundingArea
+      : location.z + prng() * boundingArea;
+  return { x: randomX, z: randomZ };
 }

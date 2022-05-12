@@ -1,2 +1,2 @@
-export { mapData, subX, subZ } from './mapData2.js';
+export { mapData, subX, subZ } from './mapData.js';
 export { sculptures } from './sculptures.js';

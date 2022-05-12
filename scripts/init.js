@@ -23,9 +23,18 @@ async function createScene(){
     camera.setTarget(BABYLON.Vector3.Zero());
     camera.attachControl(canvas, true);
 
-    let light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 50, 0), scene);
-    light.intensity = 0.8;
-    
+    var light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, -1), scene);
+    // light.diffuse = new BABYLON.Color3(1, 1, 1);
+	  // light.specular = new BABYLON.Color3(0, 1, 0);
+    // light.groundColor = new BABYLON.Color3(0, 1, 0);
+    light.intensity = 0.5;
+    let light2 = new BABYLON.DirectionalLight("directLight", new BABYLON.Vector3(-1,-1,-1), scene);
+    light2.intensity = 0.5;
+    scene.shadowsEnabled = true;
+    let shadowGenerator = new BABYLON.ShadowGenerator(4096, light2);
+    // shadowGenerator.addShadowCaster(torus);
+	  shadowGenerator.useExponentialShadowMap = true;
+    scene.shadowGenerator = shadowGenerator;
     loadAssets(scene);
     makeSkybox(scene); 
 
@@ -41,6 +50,7 @@ async function createScene(){
 
     // scene.debugLayer.show()
     // generateMap();
+    
     return scene;
 }
 

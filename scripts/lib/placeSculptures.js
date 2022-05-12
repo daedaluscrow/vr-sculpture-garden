@@ -18,8 +18,12 @@ export function placeSculptures(scene, sculptures, pedestal) {
     true
   );
 
+  pedestalMesh.receiveShadows = true;
+
   sculptures.forEach((sculpture, index) => {
+  
     let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
+    
     let location = locateSculpture(index);
     location.xFinal = config.mapFactor * location.x;
     location.zFinal = config.mapFactor * location.z;
@@ -31,7 +35,7 @@ export function placeSculptures(scene, sculptures, pedestal) {
     let pedestalBounding =
       pedestalInstance.getBoundingInfo().boundingBox.maximum;
     let yLocation = mapData[getY(location.x, location.z)];
-    console.log(getY(location.x, location.z));
+    // console.log(getY(location.x, location.z));
     // console.log(pedestalBounding.y);
     pedestalInstance.position.x = location.xFinal;
     pedestalInstance.position.z = location.zFinal;
@@ -39,11 +43,13 @@ export function placeSculptures(scene, sculptures, pedestal) {
     model.position.x = location.xFinal;
     model.position.z = location.zFinal;
     model.position.y = yLocation + pedestalBounding.y - 2 + -bounding.y;
+    scene.shadowGenerator.addShadowCaster(pedestalInstance);
+    scene.shadowGenerator.addShadowCaster(model);
   });
 }
 
 function getY(x, z) {
-  console.log(`The values of x is ${x} and z is ${z}`);
+  // console.log(`The values of x is ${x} and z is ${z}`);
   return ((z - -(subZ / 2)) * subX + (x - -(subX / 2))) * 3 + 1;
 }
 
