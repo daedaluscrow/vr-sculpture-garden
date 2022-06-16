@@ -7,20 +7,22 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   let terrain;
   let treeMesh = generateMergedMesh(treeglb, true, 0);
   let grassMesh = generateMergedMesh(grassglb, true, 0);
-
-  treeMesh.isVisible = false;
-  treeMesh.receiveShadows = true;
+  treeMesh.setParent(null);
+  grassMesh.setParent(null);
+  // scene.shadowGenerator.getShadowMap().renderList.push(treeMesh);
+  // treeMesh.receiveShadows = true;
 
   for (var i = 0; i < 1000; i++) {
     let instance = treeMesh.createInstance("trees" + i);
-    scene.shadowGenerator.addShadowCaster(instance);
-    console.log(instance);
-    // instance.receiveShadows = true;
+    // scene.shadowGenerator.getShadowMap().renderList.push(instance);
   }
 
   for (var i = 0; i < 5000; i++) {
-    grassMesh.createInstance("trees" + i);
+    let instance = grassMesh.createInstance("grass" + i);
   }
+
+  treeMesh.setEnabled(false);
+  grassMesh.setEnabled(false);
 
   var sourceMeshes = [treeMesh, grassMesh];
 
@@ -50,7 +52,8 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     // terrain.LODLimits = [4];
 
     let terrainCreated = true;
-    terrain.mesh.receiveShadows = true;
+    console.log(terrain);
+    // terrain.mesh.receiveShadows = true;
 
     let camElevation = 2.0;
     let camAltitude = 0.0;

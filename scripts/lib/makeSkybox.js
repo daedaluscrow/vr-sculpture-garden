@@ -1,5 +1,5 @@
 export function makeSkybox(scene) {
-    let skybox = BABYLON.MeshBuilder.CreateBox("vsg_skybox", { size: 2024.0 }, scene);
+    let skybox = BABYLON.MeshBuilder.CreateBox("vsg_skybox", { size: 500.0 }, scene);
     let skyboxMaterial = new BABYLON.StandardMaterial("vsg_skybox", scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/vsg_skybox", scene);

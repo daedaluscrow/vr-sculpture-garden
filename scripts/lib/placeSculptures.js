@@ -8,6 +8,8 @@ let placeZ = 0;
 let loopCount = 0;
 let prng = mulberry32(config.sculptureSpacingSeed);
 
+
+
 export function placeSculptures(scene, sculptures, pedestal) {
   let pedestalMesh = BABYLON.Mesh.MergeMeshes(
     pedestal.meshes.slice(1),
@@ -18,10 +20,10 @@ export function placeSculptures(scene, sculptures, pedestal) {
     true
   );
 
-  pedestalMesh.receiveShadows = true;
+  // pedestalMesh.receiveShadows = true;
+  // scene.shadowGenerator.getShadowMap().renderList.push(pedestalMesh);
 
-  sculptures.forEach((sculpture, index) => {
-  
+  sculptures.forEach((sculpture, index) => {  
     let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
     
     let location = locateSculpture(index);
@@ -43,8 +45,8 @@ export function placeSculptures(scene, sculptures, pedestal) {
     model.position.x = location.xFinal;
     model.position.z = location.zFinal;
     model.position.y = yLocation + pedestalBounding.y - 2 + -bounding.y;
-    scene.shadowGenerator.addShadowCaster(pedestalInstance);
-    scene.shadowGenerator.addShadowCaster(model);
+    // scene.shadowGenerator.getShadowMap().renderList.push(pedestalInstance);
+    // scene.shadowGenerator.getShadowMap().renderList.push(model);
   });
 }
 

@@ -22,19 +22,24 @@ async function createScene(){
     scene);
     camera.setTarget(BABYLON.Vector3.Zero());
     camera.attachControl(canvas, true);
+    camera.maxZ = 450;
 
-    var light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, -1), scene);
-    // light.diffuse = new BABYLON.Color3(1, 1, 1);
-	  // light.specular = new BABYLON.Color3(0, 1, 0);
-    // light.groundColor = new BABYLON.Color3(0, 1, 0);
-    light.intensity = 0.5;
-    let light2 = new BABYLON.DirectionalLight("directLight", new BABYLON.Vector3(-1,-1,-1), scene);
-    light2.intensity = 0.5;
-    scene.shadowsEnabled = true;
-    let shadowGenerator = new BABYLON.ShadowGenerator(4096, light2);
-    // shadowGenerator.addShadowCaster(torus);
-	  shadowGenerator.useExponentialShadowMap = true;
-    scene.shadowGenerator = shadowGenerator;
+    let light = new BABYLON.DirectionalLight("directLight", new BABYLON.Vector3(1, -2, 1), scene);
+    light.position = new BABYLON.Vector3(20, 40, 20);
+    light.intensity = 1.5;
+
+    // let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+    // shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE; 
+    // shadowGenerator.bias = 0.001;
+    // shadowGenerator.normalBias = 0.02;
+    // light.shadowMaxZ = 100;
+    // light.shadowMinZ = 10;
+    // shadowGenerator.useContactHardeningShadow = true;
+    // shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
+    // shadowGenerator.setDarkness(0.5);
+    // shadowGenerator.useExponentialShadowMap = true;
+    // light.autoUpdateExtends = false;
+    // scene.shadowGenerator = shadowGenerator;
     loadAssets(scene);
     makeSkybox(scene); 
 
