@@ -37,6 +37,12 @@ export function loadAssets(scene) {
     "pedestal.glb",
     scene
   );
+  let welcomeTask = BABYLON.SceneLoader.ImportMeshAsync(
+    "",
+    "../../models/welcome/",
+    "welcome.glb",
+    scene
+  );
   let fogTask = assetsManager.addTextureTask("fog", "../../textures/fog.png");
   let sculptureTasks = sculptures.map((sculpture, index) => {
     return BABYLON.SceneLoader.ImportMeshAsync(
@@ -48,12 +54,14 @@ export function loadAssets(scene) {
   });
 
   assetsManager.onFinish = function (tasks) {
-    Promise.all([treeTask, grassTask, pedestalTask]).then((assets) => {
-      generateTerrain(scene, tasks[0].texture, assets[0], assets[1]);
-      Promise.all(sculptureTasks).then((sculptures) => {
-        placeSculptures(scene, sculptures, assets[2]);
-      });
-    });
+    Promise.all([treeTask, grassTask, pedestalTask, welcomeTask]).then(
+      (assets) => {
+        generateTerrain(scene, tasks[0].texture, assets[0], assets[1]);
+        Promise.all(sculptureTasks).then((sculptures) => {
+          placeSculptures(scene, sculptures, assets[2], assets[3]);
+        });
+      }
+    );
     // let fogPS = generateFog(scene, tasks[3].texture);
   };
 

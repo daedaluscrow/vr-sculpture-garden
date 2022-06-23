@@ -9,16 +9,19 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   let grassMesh = generateMergedMesh(grassglb, true, 0);
   treeMesh.setParent(null);
   grassMesh.setParent(null);
-  // scene.shadowGenerator.getShadowMap().renderList.push(treeMesh);
-  // treeMesh.receiveShadows = true;
+  scene.shadowGenerator.addShadowCaster(treeMesh);
+  // scene.shadowGenerator.addShadowCaster(grassMesh);
+  treeMesh.receiveShadows = true;
+  grassMesh.receiveShadows = true;
 
   for (var i = 0; i < 1000; i++) {
     let instance = treeMesh.createInstance("trees" + i);
-    // scene.shadowGenerator.getShadowMap().renderList.push(instance);
+    scene.shadowGenerator.addShadowCaster(instance);
   }
 
   for (var i = 0; i < 5000; i++) {
     let instance = grassMesh.createInstance("grass" + i);
+    // scene.shadowGenerator.addShadowCaster(instance);
   }
 
   treeMesh.setEnabled(false);
@@ -53,10 +56,11 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     let terrainCreated = true;
     console.log(terrain);
-    // terrain.mesh.receiveShadows = true;
+    terrain.mesh.receiveShadows = true;
 
     let camElevation = 2.0;
     let camAltitude = 0.0;
+    scene.shadowGenerator.recreateShadowMap();
     scene.registerBeforeRender(function () {
       if (terrainCreated) {
         terrain.update(true);
@@ -129,7 +133,7 @@ function generateInstanceMap() {
         }
       } else if (index % SPlength === 1) {
         if (prng() > 0.9) {
-          let randomized = randomizeLocation({x: xp, z: zp})
+          let randomized = randomizeLocation({ x: xp, z: zp });
           instanceMapData[index % SPlength].push(
             randomized.x,
             yp,

@@ -6,60 +6,71 @@ let engine = null;
 let scene = null;
 let sceneToRender = null;
 
-let createDefaultEngine = function() {
- return new BABYLON.Engine(canvas, true, {
+let createDefaultEngine = function () {
+  return new BABYLON.Engine(canvas, true, {
     preserveDrawingBuffer: true,
     stencil: true,
     disableWebGL2Support: false,
   });
-}
+};
 
-async function createScene(){
-    const scene = new BABYLON.Scene(engine);
-    // scene.useRightHandedSystem = true;
+async function createScene() {
+  const scene = new BABYLON.Scene(engine);
+  // scene.useRightHandedSystem = true;
 
-    let camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10),
-    scene);
-    camera.setTarget(BABYLON.Vector3.Zero());
-    camera.attachControl(canvas, true);
-    camera.maxZ = 450;
+  let camera = new BABYLON.FreeCamera(
+    "camera1",
+    new BABYLON.Vector3(0, 5, -10),
+    scene
+  );
+  camera.setTarget(BABYLON.Vector3.Zero());
+  camera.attachControl(canvas, true);
+  camera.maxZ = 450;
 
-    let light = new BABYLON.DirectionalLight("directLight", new BABYLON.Vector3(1, -2, 1), scene);
-    light.position = new BABYLON.Vector3(20, 40, 20);
-    light.intensity = 1.5;
+  let light = new BABYLON.DirectionalLight(
+    "directLight",
+    new BABYLON.Vector3(0, -1, -0.3),
+    scene
+  );
+  light.position = new BABYLON.Vector3(0, 120, 0);
+  light.intensity = 1.5;
+  // light.range = 5000;
+  // light.radius = 5000;
 
-    // let shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
-    // shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE; 
-    // shadowGenerator.bias = 0.001;
-    // shadowGenerator.normalBias = 0.02;
-    // light.shadowMaxZ = 100;
-    // light.shadowMinZ = 10;
-    // shadowGenerator.useContactHardeningShadow = true;
-    // shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
-    // shadowGenerator.setDarkness(0.5);
-    // shadowGenerator.useExponentialShadowMap = true;
-    // light.autoUpdateExtends = false;
-    // scene.shadowGenerator = shadowGenerator;
-    loadAssets(scene);
-    makeSkybox(scene); 
+  // console.log(light.getDepthMaxZ(camera));
 
-    // here we add XR support
-    const xr = await scene.createDefaultXRExperienceAsync({
-      // floorMeshes: [env.ground],
-      uiOptions: {
-        onError: (error) => {
-          console.log(error);
-        },
+  let shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, light);
+  shadowGenerator.getShadowMap().refreshRate = 0;
+  shadowGenerator.bias = 0.001;
+  shadowGenerator.normalBias = 0.02;
+  // light.shadowMaxZ = 1000;
+  // light.shadowMinZ = 1;
+  shadowGenerator.useContactHardeningShadow = true;
+  shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
+  shadowGenerator.setDarkness(0.5);
+  // shadowGenerator.useExponentialShadowMap = true;
+  // light.autoUpdateExtends = false;
+  scene.shadowGenerator = shadowGenerator;
+  loadAssets(scene);
+  makeSkybox(scene);
+
+  // here we add XR support
+  const xr = await scene.createDefaultXRExperienceAsync({
+    // floorMeshes: [env.ground],
+    uiOptions: {
+      onError: (error) => {
+        console.log(error);
       },
-    });
+    },
+  });
 
-    // scene.debugLayer.show()
-    // generateMap();
-    
-    return scene;
+  //scene.debugLayer.show();
+  // generateMap();
+
+  return scene;
 }
 
-window.initFunction = async function() {  
+window.initFunction = async function () {
   let asyncEngineCreation = async function () {
     try {
       return createDefaultEngine();
@@ -74,7 +85,7 @@ window.initFunction = async function() {
   window.engine = await asyncEngineCreation();
   if (!window.engine) throw "engine should not be null.";
   window.scene = createScene();
-}
+};
 
 window.initFunction().then(() => {
   window.scene.then((returnedScene) => {

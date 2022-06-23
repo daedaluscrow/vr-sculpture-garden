@@ -8,9 +8,7 @@ let placeZ = 0;
 let loopCount = 0;
 let prng = mulberry32(config.sculptureSpacingSeed);
 
-
-
-export function placeSculptures(scene, sculptures, pedestal) {
+export function placeSculptures(scene, sculptures, pedestal, welcome) {
   let pedestalMesh = BABYLON.Mesh.MergeMeshes(
     pedestal.meshes.slice(1),
     true,
@@ -20,12 +18,12 @@ export function placeSculptures(scene, sculptures, pedestal) {
     true
   );
 
-  // pedestalMesh.receiveShadows = true;
-  // scene.shadowGenerator.getShadowMap().renderList.push(pedestalMesh);
+  pedestalMesh.receiveShadows = true;
+  scene.shadowGenerator.addShadowCaster(pedestalMesh);
 
-  sculptures.forEach((sculpture, index) => {  
+  sculptures.forEach((sculpture, index) => {
     let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
-    
+
     let location = locateSculpture(index);
     location.xFinal = config.mapFactor * location.x;
     location.zFinal = config.mapFactor * location.z;
@@ -45,9 +43,11 @@ export function placeSculptures(scene, sculptures, pedestal) {
     model.position.x = location.xFinal;
     model.position.z = location.zFinal;
     model.position.y = yLocation + pedestalBounding.y - 2 + -bounding.y;
-    // scene.shadowGenerator.getShadowMap().renderList.push(pedestalInstance);
-    // scene.shadowGenerator.getShadowMap().renderList.push(model);
+    scene.shadowGenerator.addShadowCaster(pedestalInstance);
+    scene.shadowGenerator.addShadowCaster(model);
   });
+
+  placeWelcome(welcome);
 }
 
 function getY(x, z) {
@@ -94,4 +94,19 @@ function randomizeLocation(location) {
       ? location.z - prng() * boundingArea
       : location.z + prng() * boundingArea;
   return { x: parseInt(randomX), z: parseInt(randomZ) };
+}
+
+function placeWelcome(welcome) {
+  let welcomeMesh = BABYLON.Mesh.MergeMeshes(
+    welcome.meshes.slice(1),
+    true,
+    true,
+    undefined,
+    false,
+    true
+  );
+
+  welcomeMesh.position.x = 0;
+  welcomeMesh.position.z = 0;
+  welcomeMesh.position.y = 9.5;
 }
