@@ -18,28 +18,35 @@ async function createScene() {
   const scene = new BABYLON.Scene(engine);
   // scene.useRightHandedSystem = true;
 
-  let camera = new BABYLON.FreeCamera(
+  const camera = new BABYLON.UniversalCamera(
     "camera1",
     new BABYLON.Vector3(0, 5, -10),
     scene
   );
   camera.setTarget(BABYLON.Vector3.Zero());
   camera.attachControl(canvas, true);
+  camera.speed = 0.5;
   camera.maxZ = 450;
 
-  let light = new BABYLON.DirectionalLight(
+  scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+
+  const light = new BABYLON.DirectionalLight(
     "directLight",
     new BABYLON.Vector3(0, -1, -0.3),
     scene
   );
+
+  const hemi = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0,-1, -0.3), scene);
+  hemi.intensity = 1.0;
+
   light.position = new BABYLON.Vector3(0, 120, 0);
-  light.intensity = 1.5;
+  light.intensity = 1.0;
   // light.range = 5000;
   // light.radius = 5000;
 
   // console.log(light.getDepthMaxZ(camera));
 
-  let shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, light);
+  const shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, light);
   shadowGenerator.getShadowMap().refreshRate = 0;
   shadowGenerator.bias = 0.001;
   shadowGenerator.normalBias = 0.02;
@@ -48,6 +55,8 @@ async function createScene() {
   shadowGenerator.useContactHardeningShadow = true;
   shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
   shadowGenerator.setDarkness(0.5);
+  shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_LOW;
+  shadowGenerator.stabilizeCascades = true;
   // shadowGenerator.useExponentialShadowMap = true;
   // light.autoUpdateExtends = false;
   scene.shadowGenerator = shadowGenerator;
@@ -64,7 +73,7 @@ async function createScene() {
     },
   });
 
-  //scene.debugLayer.show();
+  // scene.debugLayer.show();
   // generateMap();
 
   return scene;

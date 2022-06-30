@@ -40,7 +40,7 @@ export function loadAssets(scene) {
   let welcomeTask = BABYLON.SceneLoader.ImportMeshAsync(
     "",
     "../../models/welcome/",
-    "welcome.glb",
+    "welcome-center.glb",
     scene
   );
   let fogTask = assetsManager.addTextureTask("fog", "../../textures/fog.png");

@@ -3,4 +3,5 @@ export default {
   sculptureSpacingSeed: "VirginiaTech",
   foliageLocationSeed: "VTDogwood",
   mapFactor: 2, // This is the factor you have grown the map while generating the mapData from the mapHeight. If you use the function provided, this is 2
+  pedestalHeight: 3 // The higher the number, the lower the pedestals sit in the ground
 };

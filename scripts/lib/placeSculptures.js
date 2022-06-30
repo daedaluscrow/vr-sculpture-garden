@@ -39,10 +39,10 @@ export function placeSculptures(scene, sculptures, pedestal, welcome) {
     // console.log(pedestalBounding.y);
     pedestalInstance.position.x = location.xFinal;
     pedestalInstance.position.z = location.zFinal;
-    pedestalInstance.position.y = yLocation - 2;
+    pedestalInstance.position.y = yLocation - config.pedestalHeight;
     model.position.x = location.xFinal;
     model.position.z = location.zFinal;
-    model.position.y = yLocation + pedestalBounding.y - 2 + -bounding.y;
+    model.position.y = yLocation + pedestalBounding.y - config.pedestalHeight + -bounding.y;
     scene.shadowGenerator.addShadowCaster(pedestalInstance);
     scene.shadowGenerator.addShadowCaster(model);
   });
@@ -109,4 +109,5 @@ function placeWelcome(welcome) {
   welcomeMesh.position.x = 0;
   welcomeMesh.position.z = 0;
   welcomeMesh.position.y = 9.5;
+  welcomeMesh.checkCollisions = true;
 }
