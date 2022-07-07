@@ -34,7 +34,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     // mergedTree.dispose();
 
-    var options = {
+    const options = {
       terrainSub: 250,
       mapData: mapData, // the generated data received
       mapSubX: subX,
@@ -43,11 +43,17 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       sourceMeshes: sourceMeshes,
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
+    const water = new BABYLON.DynamicTerrain("water", {terrainSub: 250}, scene);
+
+    const waterMaterial = new BABYLON.StandardMaterial("materialWater", scene);
+    waterMaterial.diffuseColor = new BABYLON.Color3(0.37, 0.67, 0.96);
+    waterMaterial.alpha = 0.5;
+    water.mesh.material = waterMaterial;
 
     grass.uScale = 20.0;
     grass.vScale = grass.uScale;
 
-    let terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
+    const terrainMaterial = new BABYLON.StandardMaterial("materialGrass", scene);
     terrainMaterial.diffuseTexture = grass;
     terrain.mesh.material = terrainMaterial;
     // terrain.subToleranceX = 5;
@@ -55,22 +61,19 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     // terrain.LODLimits = [4];
 
     let terrainCreated = true;
+    let fly = false;
+    scene.fly = fly;
     console.log(terrain);
     terrain.mesh.receiveShadows = true;
 
-    let camElevation = 2.0;
-    let camAltitude = 0.0;
+    const camElevation = 2.0;
     scene.shadowGenerator.recreateShadowMap();
+    scene.onReadyObservable.addOnce(() => {
+      if(terrainCreated) {terrain.update(true); console.log("Scene ready...")}
+    });
     scene.registerBeforeRender(function () {
-      if (terrainCreated) {
-        terrain.update(true);
-        let currentCamera = scene.activeCamera;
-        camAltitude =
-          terrain.getHeightFromMap(
-            currentCamera.position.x,
-            currentCamera.position.z
-          ) + camElevation;
-        currentCamera.position.y = camAltitude;
+      if (terrainCreated && !scene.fly) {
+        scene.activeCamera.position.y = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + camElevation;
       }
     });
   };
@@ -118,7 +121,7 @@ function generateInstanceMap() {
       let ry = prng() * 3.6;
       let scale = 0.9 + prng();
       if (index % SPlength === 0) {
-        if (prng() > 0.997) {
+        if (prng() > 0.997 && yp > 0) {
           instanceMapData[index % SPlength].push(
             xp,
             yp,
@@ -132,7 +135,7 @@ function generateInstanceMap() {
           );
         }
       } else if (index % SPlength === 1) {
-        if (prng() > 0.9) {
+        if (prng() > 0.9 && yp > 0) {
           let randomized = randomizeLocation({ x: xp, z: zp });
           instanceMapData[index % SPlength].push(
             randomized.x,

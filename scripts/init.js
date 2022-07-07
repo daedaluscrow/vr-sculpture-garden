@@ -1,4 +1,4 @@
-import { makeSkybox, loadAssets } from "./lib/index.js";
+import { makeSkybox, loadAssets, setControls } from "./lib/index.js";
 // import { generateMap } from "../utils/generateMap.js";
 
 const canvas = document.getElementById("renderCanvas");
@@ -25,7 +25,8 @@ async function createScene() {
   );
   camera.setTarget(BABYLON.Vector3.Zero());
   camera.attachControl(canvas, true);
-  camera.speed = 0.5;
+  camera.speed = 2;
+  // camera.speed = 0.5;
   camera.maxZ = 450;
 
   scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
@@ -62,6 +63,7 @@ async function createScene() {
   scene.shadowGenerator = shadowGenerator;
   loadAssets(scene);
   makeSkybox(scene);
+  setControls(scene);
 
   // here we add XR support
   const xr = await scene.createDefaultXRExperienceAsync({
