@@ -29,7 +29,10 @@ async function createScene() {
   // camera.speed = 0.5;
   camera.maxZ = 450;
 
-  scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+  // scene.collisionsEnabled = true;
+
+  // camera.checkCollisions = true;
+  // camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
 
   const light = new BABYLON.DirectionalLight(
     "directLight",

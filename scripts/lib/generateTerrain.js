@@ -29,6 +29,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
   var sourceMeshes = [treeMesh, grassMesh];
 
+  // let time = 0.0;
   let createTerrain = function () {
     let instanceMapData = generateInstanceMap();
 
@@ -50,6 +51,13 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     waterMaterial.alpha = 0.5;
     water.mesh.material = waterMaterial;
 
+    // water.useCustomVertexFunction = true;
+    // water.computeNormals = true;
+    // water.refreshEveryFrame = true;
+    // water.updateVertex = function(vertex, i, j) {
+    //     vertex.position.y = 0.05 * Math.sin((vertex.position.x + time) / 0.2)  *  Math.cos((vertex.position.z +  5 * time) / 0.2);
+    // };
+
     grass.uScale = 20.0;
     grass.vScale = grass.uScale;
 
@@ -63,17 +71,18 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     let terrainCreated = true;
     let fly = false;
     scene.fly = fly;
-    console.log(terrain);
     terrain.mesh.receiveShadows = true;
-
-    const camElevation = 2.0;
+    
+    scene.terrain = terrain;
     scene.shadowGenerator.recreateShadowMap();
     scene.onReadyObservable.addOnce(() => {
       if(terrainCreated) {terrain.update(true); console.log("Scene ready...")}
     });
     scene.registerBeforeRender(function () {
+      // time += 0.005;
       if (terrainCreated && !scene.fly) {
-        scene.activeCamera.position.y = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + camElevation;
+        const height = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + config.camElevation;
+        scene.activeCamera.position.y > height ? scene.activeCamera.position.y -= config.gravityConstant: scene.activeCamera.position.y = height-0.1;
       }
     });
   };
