@@ -70,7 +70,9 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
 
     let terrainCreated = true;
     let fly = false;
+    let jump = false;
     scene.fly = fly;
+    scene.jump = jump;
     terrain.mesh.receiveShadows = true;
     
     scene.terrain = terrain;
@@ -79,10 +81,16 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       if(terrainCreated) {terrain.update(true); console.log("Scene ready...")}
     });
     scene.registerBeforeRender(function () {
-      // time += 0.005;
-      if (terrainCreated && !scene.fly) {
-        const height = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + config.camElevation;
-        scene.activeCamera.position.y > height ? scene.activeCamera.position.y -= config.gravityConstant: scene.activeCamera.position.y = height-0.1;
+      // BOOO let's do better in the future. Hate this code...
+      const height = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + config.camElevation;
+      if (terrainCreated && !scene.fly && !scene.jump) {
+        scene.activeCamera.position.y = height;
+      } else if (terrainCreated && !scene.fly && scene.jump) {
+        if(scene.activeCamera.position.y >= height) {
+          scene.activeCamera.position.y -= config.gravityConstant}
+          else {scene.activeCamera.position.y = height; scene.jump = false; } 
+      } else if(terrainCreated) {
+        scene.activeCamera.position.y < height ? scene.activeCamera.position.y = height : null;
       }
     });
   };

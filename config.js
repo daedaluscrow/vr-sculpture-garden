@@ -7,4 +7,5 @@ export default {
   gravityConstant: 0.15, // How quickly the camera falls back to the ground. Higher means it falls faster
   jumpForce: 0.35, // How much force is put into the jump action. Higher means a higher jump
   camElevation: 2.0, // Height of camera off the ground in units
+  jumpTime: 5, // Amount of time jumping happens. Higher number means higher jumps.
 };
