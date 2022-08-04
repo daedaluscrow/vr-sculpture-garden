@@ -81,16 +81,23 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       if(terrainCreated) {terrain.update(true); console.log("Scene ready...")}
     });
     scene.registerBeforeRender(function () {
-      // BOOO let's do better in the future. Hate this code...
+      if (!terrainCreated) return;
+      
       const height = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + config.camElevation;
-      if (terrainCreated && !scene.fly && !scene.jump) {
-        scene.activeCamera.position.y = height;
-      } else if (terrainCreated && !scene.fly && scene.jump) {
-        if(scene.activeCamera.position.y >= height) {
-          scene.activeCamera.position.y -= config.gravityConstant}
-          else {scene.activeCamera.position.y = height; scene.jump = false; } 
-      } else if(terrainCreated) {
+      
+      if (scene.fly) {
         scene.activeCamera.position.y < height ? scene.activeCamera.position.y = height : null;
+        return;
+      }
+
+      
+      
+      if (!scene.jump) {
+        scene.activeCamera.position.y = height;
+      } else if (scene.jump) {
+        if(scene.activeCamera.position.y >= height && scene.animRunning) {
+          scene.activeCamera.position.y -= config.gravityConstant}
+          else {scene.activeCamera.position.y = height; scene.jump = false; console.log("No jump"); } 
       }
     });
   };

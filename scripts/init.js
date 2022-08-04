@@ -1,5 +1,6 @@
 import { makeSkybox, loadAssets, setControls } from "./lib/index.js";
 // import { generateMap } from "../utils/generateMap.js";
+import config from '../config.js';
 
 const canvas = document.getElementById("renderCanvas");
 let engine = null;
@@ -49,6 +50,8 @@ async function createScene() {
   // light.radius = 5000;
 
   // console.log(light.getDepthMaxZ(camera));
+
+  
 
   const shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, light);
   shadowGenerator.getShadowMap().refreshRate = 0;
