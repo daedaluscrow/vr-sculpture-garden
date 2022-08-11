@@ -1,4 +1,4 @@
-import { makeSkybox, loadAssets, setControls } from "./lib/index.js";
+import { makeSkybox, loadAssets, setControls, createJumpAnim } from "./lib/index.js";
 // import { generateMap } from "../utils/generateMap.js";
 import config from '../config.js';
 
@@ -26,8 +26,7 @@ async function createScene() {
   );
   camera.setTarget(BABYLON.Vector3.Zero());
   camera.attachControl(canvas, true);
-  camera.speed = 2;
-  // camera.speed = 0.5;
+  camera.speed = config.speed;
   camera.maxZ = 450;
 
   // scene.collisionsEnabled = true;
@@ -70,6 +69,7 @@ async function createScene() {
   loadAssets(scene);
   makeSkybox(scene);
   setControls(scene);
+  createJumpAnim(scene);
 
   // here we add XR support
   const xr = await scene.createDefaultXRExperienceAsync({

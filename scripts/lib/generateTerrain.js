@@ -69,10 +69,10 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
     // terrain.LODLimits = [4];
 
     let terrainCreated = true;
-    let fly = false;
-    let jump = false;
-    scene.fly = fly;
-    scene.jump = jump;
+    scene.fly = false;
+    scene.jump = false;
+    scene.animRunning = false;
+    scene.lastY;
     terrain.mesh.receiveShadows = true;
     
     scene.terrain = terrain;
@@ -81,24 +81,24 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       if(terrainCreated) {terrain.update(true); console.log("Scene ready...")}
     });
     scene.registerBeforeRender(function () {
-      if (!terrainCreated) return;
+      if (!terrainCreated || scene.animRunning) return;
       
       const height = terrain.getHeightFromMap(scene.activeCamera.position.x,scene.activeCamera.position.z) + config.camElevation;
-      
+
       if (scene.fly) {
         scene.activeCamera.position.y < height ? scene.activeCamera.position.y = height : null;
         return;
       }
+      console.log(scene.lastY);
+      if (!scene.jump) {scene.activeCamera.position.y = height - 0.1; return;}
 
-      
-      
-      if (!scene.jump) {
-        scene.activeCamera.position.y = height;
-      } else if (scene.jump) {
-        if(scene.activeCamera.position.y >= height && scene.animRunning) {
-          scene.activeCamera.position.y -= config.gravityConstant}
-          else {scene.activeCamera.position.y = height; scene.jump = false; console.log("No jump"); } 
-      }
+      if(scene.jump && scene.activeCamera.position.y > height) {
+        scene.activeCamera.position.y = scene.lastY - config.gravityConstant;
+        scene.lastY = scene.activeCamera.position.y;
+      } else {
+        scene.activeCamera.position.y = height - 0.1;
+        scene.jump = false;
+      } 
     });
   };
 

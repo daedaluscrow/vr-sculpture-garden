@@ -10,7 +10,7 @@ export function setControls(scene) {
             }
             else if(kbInfo.event.key === "f") {
               scene.fly = !scene.fly;
-              if (scene.fly) scene.jump = true;
+              scene.fly ? scene.jump = true : scene.lastY = scene.activeCamera.position.y;
             }
             else {
               console.log("Key = " + kbInfo.event.key);
@@ -21,29 +21,16 @@ export function setControls(scene) {
 }
 
 function jump(scene) {
-  scene.animRunning = false;
-  if (scene.jump) return;
-  console.log("Jump!");
-  let animationJump = new BABYLON.Animation("jumpEasingAnimation", "position.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT);
-  let start = new BABYLON.AnimationEvent(
-    0,
-    function () {
-      scene.animRunning = true;
-    },
-    true,
-  );
-  let end = new BABYLON.AnimationEvent(70, function() { scene.animRunning = false;}, true);
-  animationJump.addEvent(start);
-  animationJump.addEvent(end);
+  if (scene.animRunning === true || scene.fly) return;
+  
+  scene.jump = true;
+  
   let cameraPos = scene.activeCamera.position.y;
   let keys = [];
   keys.push({ frame: 0, value: cameraPos });
   keys.push({ frame: 70, value: cameraPos + config.jumpForce });
-  animationJump.setKeys(keys);
-  let easingFunction = new BABYLON.CubicEase();
-  easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
-  animationJump.setEasingFunction(easingFunction);
-  scene.activeCamera.animations.push(animationJump);
-  scene.jump = true;
+  
+  scene.animationJump.setKeys(keys);
+  
   scene.beginAnimation(scene.activeCamera, 0, 70, false);
 }
