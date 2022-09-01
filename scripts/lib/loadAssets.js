@@ -28,7 +28,7 @@ export function loadAssets(scene) {
   let grassTask = BABYLON.SceneLoader.ImportMeshAsync(
     "",
     "../../models/grass/",
-    "grass.glb",
+    "grass2.glb",
     scene
   );
   let pedestalTask = BABYLON.SceneLoader.ImportMeshAsync(

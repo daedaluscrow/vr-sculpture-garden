@@ -89,7 +89,6 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
         scene.activeCamera.position.y < height ? scene.activeCamera.position.y = height : null;
         return;
       }
-      console.log(scene.lastY);
       if (!scene.jump) {scene.activeCamera.position.y = height - 0.1; return;}
 
       if(scene.jump && scene.activeCamera.position.y > height) {
@@ -159,7 +158,7 @@ function generateInstanceMap() {
           );
         }
       } else if (index % SPlength === 1) {
-        if (prng() > 0.9 && yp > 0) {
+        if (prng() > 0.8 && yp > 0) {
           let randomized = randomizeLocation({ x: xp, z: zp });
           instanceMapData[index % SPlength].push(
             randomized.x,
