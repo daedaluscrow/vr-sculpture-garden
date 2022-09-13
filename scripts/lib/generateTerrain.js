@@ -42,6 +42,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       mapSubZ: subZ,
       instanceMapData: instanceMapData,
       sourceMeshes: sourceMeshes,
+      precomputeInstances: false,
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
     const water = new BABYLON.DynamicTerrain("water", {terrainSub: 250}, scene);

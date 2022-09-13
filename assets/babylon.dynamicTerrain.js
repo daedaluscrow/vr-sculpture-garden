@@ -90,7 +90,7 @@ var BABYLON;
             this._instanceMapData = options.instanceMapData;
             this._instanceColorData = options.instanceColorData;
             this._sourceMeshes = options.sourceMeshes;
-            this._precomputeInstances = (options.precomputeInstances) ? (options.precomputeInstances) : true;
+            this._precomputeInstances = (typeof options.precomputeInstances === undefined) ? true : options.precomputeInstances;
             // initialize the map arrays if not passed as parameters
             this._datamap = (this._mapData) ? true : false;
             this._uvmap = (this._mapUVs) ? true : false;
@@ -897,9 +897,12 @@ var BABYLON;
                                         var nextFree = iIdx + used;
                                         var bufferIndex = nextFree * 16; // the world matrix instanced buffer offset is 16
                                         if (precomputeInstances) {
+                                            console.log(precomputeInstances)
+                                            console.log("precompute reached")
                                             copyArrayValuesFromToRef(instWM, ix * 16, 16, mat);
                                         }
                                         else {
+                                            console.log("else reached")
                                             var x = data[idm];
                                             var y = data[idm + 1];
                                             var z = data[idm + 2];
