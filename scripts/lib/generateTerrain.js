@@ -14,12 +14,12 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
   treeMesh.receiveShadows = true;
   grassMesh.receiveShadows = true;
 
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < config.treeInstances; i++) {
     let instance = treeMesh.createInstance("trees" + i);
     scene.shadowGenerator.addShadowCaster(instance);
   }
 
-  for (var i = 0; i < 5000; i++) {
+  for (var i = 0; i < config.grassInstances; i++) {
     let instance = grassMesh.createInstance("grass" + i);
     // scene.shadowGenerator.addShadowCaster(instance);
   }
@@ -42,7 +42,7 @@ export function generateTerrain(scene, grass, treeglb, grassglb) {
       mapSubZ: subZ,
       instanceMapData: instanceMapData,
       sourceMeshes: sourceMeshes,
-      precomputeInstances: false,
+      precomputeInstances: true,
     };
     terrain = new BABYLON.DynamicTerrain("dt", options, scene);
     const water = new BABYLON.DynamicTerrain("water", {terrainSub: 250}, scene);
@@ -145,7 +145,7 @@ function generateInstanceMap() {
       let ry = prng() * 3.6;
       let scale = 0.9 + prng();
       if (index % SPlength === 0) {
-        if (prng() > 0.997 && yp > 0) {
+        if (prng() > config.treeDensity && yp > 0) {
           instanceMapData[index % SPlength].push(
             xp,
             yp,
@@ -159,7 +159,7 @@ function generateInstanceMap() {
           );
         }
       } else if (index % SPlength === 1) {
-        if (prng() > 0.8 && yp > 0) {
+        if (prng() > config.grassDensity && yp > 0) {
           let randomized = randomizeLocation({ x: xp, z: zp });
           instanceMapData[index % SPlength].push(
             randomized.x,

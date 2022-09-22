@@ -43,6 +43,21 @@ export function placeSculptures(scene, sculptures, pedestal, welcome) {
     model.position.x = location.xFinal;
     model.position.z = location.zFinal;
     model.position.y = yLocation + pedestalBounding.y - config.pedestalHeight + -bounding.y;
+
+    const plane = BABYLON.MeshBuilder.CreatePlane("plane", {size: 5}, scene);
+    plane.parent = pedestalInstance;
+    plane.position.y = pedestalInstance.position.y + 2;
+    const mat = new BABYLON.StandardMaterial("signageMat", scene);
+    mat.diffuseColor = new BABYLON.Color3(1, 1, 1);
+    plane.material = mat;
+    const signage = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
+    const sculptureInfo = new BABYLON.GUI.TextBlock("info", "Hello world");
+    sculptureInfo.color = "white";
+    sculptureInfo.fontSizeInPixels = 50;
+    sculptureInfo.background = "black";
+    signage.addControl(sculptureInfo); 
+    sculptureInfo.linkWithMesh(pedestalInstance);
+
     scene.shadowGenerator.addShadowCaster(pedestalInstance);
     scene.shadowGenerator.addShadowCaster(model);
   });

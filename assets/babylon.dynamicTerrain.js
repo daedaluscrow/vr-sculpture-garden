@@ -90,7 +90,7 @@ var BABYLON;
             this._instanceMapData = options.instanceMapData;
             this._instanceColorData = options.instanceColorData;
             this._sourceMeshes = options.sourceMeshes;
-            this._precomputeInstances = (typeof options.precomputeInstances === undefined) ? true : options.precomputeInstances;
+            this._precomputeInstances = (typeof options.precomputeInstances === "undefined") ? true : options.precomputeInstances;
             // initialize the map arrays if not passed as parameters
             this._datamap = (this._mapData) ? true : false;
             this._uvmap = (this._mapUVs) ? true : false;
@@ -103,12 +103,13 @@ var BABYLON;
             this._mapData = (this._datamap) ? this._mapData : new Float32Array(this._terrainIdx * this._terrainIdx * 3);
             this._mapUVs = (this._uvmap) ? this._mapUVs : new Float32Array(this._terrainIdx * this._terrainIdx * 2);
             if (this._datamap) {
-                this._mapNormals = options.mapNormals || new Float32Array(this._mapSubX * this._mapSubZ * 3);
+                this._mapNormals = options.mapN_ormals || new Float32Array(this._mapSubX * this._mapSubZ * 3);
             }
             else {
                 this._mapNormals = new Float32Array(this._terrainIdx * this._terrainIdx * 3);
             }
             this._mapQuads = [];
+            this._precomputeEnd = false; // Ends using precomputeInstances when seam reached
             // Ribbon creation
             var index = 0; // current vertex index in the map array
             var posIndex = 0; // current position (coords) index in the map array
@@ -896,13 +897,10 @@ var BABYLON;
                                         // set successive instance of this type
                                         var nextFree = iIdx + used;
                                         var bufferIndex = nextFree * 16; // the world matrix instanced buffer offset is 16
-                                        if (precomputeInstances) {
-                                            console.log(precomputeInstances)
-                                            console.log("precompute reached")
+                                        if (precomputeInstances && !seamX && !seamZ && !this._precomputeEnd) {
                                             copyArrayValuesFromToRef(instWM, ix * 16, 16, mat);
                                         }
                                         else {
-                                            console.log("else reached")
                                             var x = data[idm];
                                             var y = data[idm + 1];
                                             var z = data[idm + 2];
@@ -915,6 +913,7 @@ var BABYLON;
                                             BABYLON.Quaternion.RotationYawPitchRollToRef(y, x, z, quat);
                                             sclVct.copyFromFloats(data[idm + 6], data[idm + 7], data[idm + 8]);
                                             composeToRef(sclVct, quat, posVct, mat);
+                                            if (!this._precomputeEnd) this._precomputeEnd = true;
                                         }
                                         instancedBuffer.set(mat, bufferIndex);
                                         if (instanceColorData) {
