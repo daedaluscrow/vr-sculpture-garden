@@ -1,6 +1,7 @@
 import { mapData, subX, subZ } from "../../data/index.js";
 import config from "../../config.js";
 import { mulberry32 } from "./prng.js";
+import { sculptures } from "../../data/sculptures.js";
 
 const gardenSpacing = config.gardenSpacing;
 let placeX = 0;
@@ -8,7 +9,7 @@ let placeZ = 0;
 let loopCount = 0;
 let prng = mulberry32(config.sculptureSpacingSeed);
 
-export function placeSculptures(scene, sculptures, pedestal, welcome) {
+export function placeSculptures(scene, sculptureMeshes, pedestal, welcome) {
   let pedestalMesh = BABYLON.Mesh.MergeMeshes(
     pedestal.meshes.slice(1),
     true,
@@ -21,7 +22,7 @@ export function placeSculptures(scene, sculptures, pedestal, welcome) {
   pedestalMesh.receiveShadows = true;
   scene.shadowGenerator.addShadowCaster(pedestalMesh);
 
-  sculptures.forEach((sculpture, index) => {
+  sculptureMeshes.forEach(async (sculptureMesh, index) => {
     let pedestalInstance = pedestalMesh.createInstance("pedestal" + index);
 
     let location = locateSculpture(index);
@@ -29,7 +30,7 @@ export function placeSculptures(scene, sculptures, pedestal, welcome) {
     location.zFinal = config.mapFactor * location.z;
 
     // console.log(location);
-    let model = sculpture.meshes[1];
+    let model = sculptureMesh.meshes[1];
     model.parent = null;
     let bounding = model.getBoundingInfo().boundingBox.minimum;
     let pedestalBounding =
@@ -44,19 +45,17 @@ export function placeSculptures(scene, sculptures, pedestal, welcome) {
     model.position.z = location.zFinal;
     model.position.y = yLocation + pedestalBounding.y - config.pedestalHeight + -bounding.y;
 
-    const plane = BABYLON.MeshBuilder.CreatePlane("plane", {size: 5}, scene);
+    const plane = BABYLON.MeshBuilder.CreatePlane("plane", {height: 2, width: 4}, scene);
     plane.parent = pedestalInstance;
     plane.position.y = pedestalInstance.position.y + 2;
-    const mat = new BABYLON.StandardMaterial("signageMat", scene);
-    mat.diffuseColor = new BABYLON.Color3(1, 1, 1);
+    const mat = new BABYLON.StandardMaterial("Mat", scene);
+    const signage = BABYLON.GUI.AdvancedDynamicTexture.CreateForMeshTexture(plane);
+    await signage.parseFromURLAsync("./textures/nameplate.json");
+    signage.rootContainer.children[1].text = sculptures[index].name
+    signage.rootContainer.children[2].text = sculptures[index].description
+    signage.rootContainer.children[3].text = sculptures[index].artist
+    mat.diffuseTexture = signage;
     plane.material = mat;
-    const signage = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
-    const sculptureInfo = new BABYLON.GUI.TextBlock("info", "Hello world");
-    sculptureInfo.color = "white";
-    sculptureInfo.fontSizeInPixels = 50;
-    sculptureInfo.background = "black";
-    signage.addControl(sculptureInfo); 
-    sculptureInfo.linkWithMesh(pedestalInstance);
 
     scene.shadowGenerator.addShadowCaster(pedestalInstance);
     scene.shadowGenerator.addShadowCaster(model);
