@@ -46,10 +46,16 @@ export function placeSculptures(scene, sculptureMeshes, pedestal, welcome) {
     model.position.y = yLocation + pedestalBounding.y - config.pedestalHeight + -bounding.y;
 
     const plane = BABYLON.MeshBuilder.CreatePlane("plane", {height: 2, width: 4}, scene);
-    plane.parent = pedestalInstance;
-    plane.position.y = pedestalInstance.position.y + 2;
+    plane.index = index;
+    // plane.parent = pedestalInstance;
+    plane.position.x = pedestalInstance.position.x
+    plane.position.z = pedestalInstance.position.z + 2.5;
+    plane.position.y = pedestalInstance.position.y + 5;
+    plane.rotation.y = Math.PI;
+    console.log(plane.rotation);
+    
     const mat = new BABYLON.StandardMaterial("Mat", scene);
-    const signage = BABYLON.GUI.AdvancedDynamicTexture.CreateForMeshTexture(plane);
+    const signage = BABYLON.GUI.AdvancedDynamicTexture.CreateForMeshTexture(plane, 1463, 768);
     await signage.parseFromURLAsync("./textures/nameplate.json");
     signage.rootContainer.children[1].text = sculptures[index].name
     signage.rootContainer.children[2].text = sculptures[index].description
