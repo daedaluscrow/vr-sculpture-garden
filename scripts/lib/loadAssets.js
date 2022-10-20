@@ -3,6 +3,8 @@ import { sculptures } from "../../data/sculptures.js";
 
 export function loadAssets(scene) {
   let assetsManager = new BABYLON.AssetsManager(scene);
+  assetsManager.useDefaultLoadingScreen = false;
+  assetsManager.autoHideLoadingUI = false;
 
   let bgMusic = new BABYLON.Sound(
     "Background Music",
@@ -25,24 +27,28 @@ export function loadAssets(scene) {
     "dogwood-material.glb",
     scene
   );
+ 
   let grassTask = BABYLON.SceneLoader.ImportMeshAsync(
     "",
     "../../models/grass/",
     "grass2.glb",
     scene
   );
+  
   let pedestalTask = BABYLON.SceneLoader.ImportMeshAsync(
     "",
     "../../models/pedestal/",
     "pedestal.glb",
     scene
   );
+  
   let welcomeTask = BABYLON.SceneLoader.ImportMeshAsync(
     "",
     "../../models/welcome/",
     "welcome-center.glb",
     scene
   );
+
   let fogTask = assetsManager.addTextureTask("fog", "../../textures/fog.png");
   let sculptureTasks = sculptures.map((sculpture, index) => {
     return BABYLON.SceneLoader.ImportMeshAsync(
@@ -59,6 +65,10 @@ export function loadAssets(scene) {
         generateTerrain(scene, tasks[0].texture, assets[0], assets[1]);
         Promise.all(sculptureTasks).then((sculptures) => {
           placeSculptures(scene, sculptures, assets[2], assets[3]);
+        }).then(() => {
+          const engine = scene.getEngine();
+          console.log(engine);
+          engine.loadingScreen.loadingUIReady();
         });
       }
     );

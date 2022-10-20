@@ -5,3 +5,4 @@ export { generateFog } from "./generateFog.js";
 export { placeSculptures } from "./placeSculptures.js";
 export { setControls } from "./setControls.js";
 export { createJumpAnim } from "./createJumpAnim.js";
+export { CustomLoadingScreen } from './customLoadingScreen.js';

@@ -1,4 +1,4 @@
-import { makeSkybox, loadAssets, setControls, createJumpAnim } from "./lib/index.js";
+import { makeSkybox, loadAssets, setControls, createJumpAnim, CustomLoadingScreen } from "./lib/index.js";
 // import { generateMap } from "../utils/generateMap.js";
 import config from '../config.js';
 
@@ -101,6 +101,10 @@ window.initFunction = async function () {
 
   window.engine = await asyncEngineCreation();
   if (!window.engine) throw "engine should not be null.";
+  const loadingScreen = new CustomLoadingScreen();
+  window.engine.loadingScreen = loadingScreen;
+  window.engine.displayLoadingUI();
+  console.log("interrupt");
   window.scene = createScene();
 };
 

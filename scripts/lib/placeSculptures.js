@@ -52,7 +52,6 @@ export function placeSculptures(scene, sculptureMeshes, pedestal, welcome) {
     plane.position.z = pedestalInstance.position.z + 2.5;
     plane.position.y = pedestalInstance.position.y + 5;
     plane.rotation.y = Math.PI;
-    console.log(plane.rotation);
     
     const mat = new BABYLON.StandardMaterial("Mat", scene);
     const signage = BABYLON.GUI.AdvancedDynamicTexture.CreateForMeshTexture(plane, 1463, 768);

@@ -1,5 +1,43 @@
-#renderCanvas {
+html, body {
+    padding: 0;
+    margin: 0;
+    background-color: black;
+}
+
+#renderCanvas, #loadingScreen {
     width: 100%;
     height: 100vh;
     z-index: 9999;
+    display: none;
+}
+
+#loadingScreen {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#loading-graphic-container {
+    max-width: 500px;
+}
+
+#loading-text, #loading-button {
+    color: white;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 2rem;
+}
+
+#loading-button {
+    display: none;
+    width: 250px;
+    height: 80px;
+    background-color: black;
+    border-radius: 0px;
+    border: 3px solid white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 }
