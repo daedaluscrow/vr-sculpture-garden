@@ -17,6 +17,18 @@ export function loadAssets(scene) {
     }
   );
 
+  let ambient = new BABYLON.Sound(
+    "Ambient",
+    "../../sounds/ambient.mp3",
+    scene,
+    null,
+    {
+      loop: true,
+      autoplay: true,
+      volume: 0.3,
+    }
+  );
+
   let textureTask = assetsManager.addTextureTask(
     "vsg_grass_tile",
     "../../textures/terrain/vsg_grass_tile-1024.jpg"
@@ -60,6 +72,7 @@ export function loadAssets(scene) {
   });
 
   assetsManager.onFinish = function (tasks) {
+    // scene.footsteps = footsteps;
     Promise.all([treeTask, grassTask, pedestalTask, welcomeTask]).then(
       (assets) => {
         generateTerrain(scene, tasks[0].texture, assets[0], assets[1]);
@@ -67,7 +80,6 @@ export function loadAssets(scene) {
           placeSculptures(scene, sculptures, assets[2], assets[3]);
         }).then(() => {
           const engine = scene.getEngine();
-          console.log(engine);
           engine.loadingScreen.loadingUIReady();
         });
       }

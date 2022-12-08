@@ -24,6 +24,7 @@ export class CustomLoadingScreen {
         const canvas = document.getElementById("renderCanvas");
         loadElement.style.display = "none";
         canvas.style.display = "flex";
+        BABYLON.Engine.audioEngine.unlock()
         window.engine.resize();
     }
 }
